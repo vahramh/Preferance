@@ -731,7 +731,7 @@ namespace Preferance.Controllers
                                 }
                                 else
                                 {
-                                    game.NextPlayer = game.Player2;
+                                    game.NextPlayer = game.Player1;
                                 }
                             }
                             else
