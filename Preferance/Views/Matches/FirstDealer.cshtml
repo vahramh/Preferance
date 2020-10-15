@@ -1,0 +1,99 @@
+﻿@model Preferance.Models.Match
+
+@{
+    ViewData["Title"] = "Match";
+}
+
+<div>
+    @if (Model.Games.Count == 0)
+    {
+        <label>First game in the match. Who's dealing?</label>
+        <br />
+        <!--            <input type="button" id="btnDealer1" class="badge-pill badge-light" value="@Model.Player1.Name" onclick="setfirstdealer(1)" />
+                    <input type="button" id="btnDealer2" class="badge-pill badge-light" value="@Model.Player2.Name" onclick="setfirstdealer(2)" />
+                    <input type="button" id="btnDealer3" class="badge-pill badge-light" value="@Model.Player3.Name" onclick="setfirstdealer(3)" />
+                    <input type="button" id="btnDealer4" class="badge-pill badge-light" value="@Model.Player4.Name" onclick="setfirstdealer(4)" />
+                    -->
+        @Html.ActionLink(@Model.Player1.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.Player1.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+        @Html.ActionLink(@Model.Player2.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.Player2.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+        @Html.ActionLink(@Model.Player3.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.Player3.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+        @Html.ActionLink(@Model.Player4.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.Player4.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+    }
+</div>
+<!--
+<br />
+<form asp-action="SetFirstDealer">
+    <input asp-for="Id" value="@Model.Id" hidden />
+    <input id="FirstDealer" />
+    <input id="Player1Id" asp-for="Player1.Id" value="@Model.Player1.Id" hidden />
+    <input id="Player2Id" asp-for="Player2.Id" value="@Model.Player2.Id" hidden />
+    <input id="Player3Id" asp-for="Player3.Id" value="@Model.Player3.Id" hidden />
+    <input id="Player4Id" asp-for="Player4.Id" value="@Model.Player4.Id" hidden />
+    <input id="txtSubmit" type="submit" class="badge-pill badge-primary" onclick="setfirstdealervalue()" disabled />
+</form>
+    -->
+<script>
+    function setfirstdealervalue() {
+        TempData["FirstDealer"] = document.getElementById("FirstDealer").value;
+    }
+
+    function setfirstdealer(i) {
+        switch (i) {
+            case 1:
+                document.getElementById("btnDealer1").classList.remove("badge-light");
+                document.getElementById("btnDealer1").classList.add("badge-info");
+                document.getElementById("btnDealer2").classList.remove("badge-info");
+                document.getElementById("btnDealer2").classList.add("badge-light");
+                document.getElementById("btnDealer3").classList.remove("badge-info");
+                document.getElementById("btnDealer3").classList.add("badge-light");
+                document.getElementById("btnDealer4").classList.remove("badge-info");
+                document.getElementById("btnDealer4").classList.add("badge-light");
+                document.getElementById("txtSubmit").disabled = false;
+                document.getElementById("FirstDealer").value = document.getElementById("Player1Id").value;
+                break;
+            case 2:
+                document.getElementById("btnDealer2").classList.remove("badge-light");
+                document.getElementById("btnDealer2").classList.add("badge-info");
+                document.getElementById("btnDealer1").classList.remove("badge-info");
+                document.getElementById("btnDealer1").classList.add("badge-light");
+                document.getElementById("btnDealer3").classList.remove("badge-info");
+                document.getElementById("btnDealer3").classList.add("badge-light");
+                document.getElementById("btnDealer4").classList.remove("badge-info");
+                document.getElementById("btnDealer4").classList.add("badge-light");
+                document.getElementById("txtSubmit").disabled = false;
+                document.getElementById("FirstDealer").value = document.getElementById("Player2Id").value;
+                alert("2");
+                break;
+            case 3:
+                document.getElementById("btnDealer3").classList.remove("badge-light");
+                document.getElementById("btnDealer3").classList.add("badge-info");
+                document.getElementById("btnDealer2").classList.remove("badge-info");
+                document.getElementById("btnDealer2").classList.add("badge-light");
+                document.getElementById("btnDealer1").classList.remove("badge-info");
+                document.getElementById("btnDealer1").classList.add("badge-light");
+                document.getElementById("btnDealer4").classList.remove("badge-info");
+                document.getElementById("btnDealer4").classList.add("badge-light");
+                document.getElementById("txtSubmit").disabled = false;
+                document.getElementById("FirstDealer").value = document.getElementById("Player3Id").value;
+                alert("3");
+                break;
+            case 4:
+                document.getElementById("btnDealer4").classList.remove("badge-light");
+                document.getElementById("btnDealer4").classList.add("badge-info");
+                document.getElementById("btnDealer2").classList.remove("badge-info");
+                document.getElementById("btnDealer2").classList.add("badge-light");
+                document.getElementById("btnDealer3").classList.remove("badge-info");
+                document.getElementById("btnDealer3").classList.add("badge-light");
+                document.getElementById("btnDealer1").classList.remove("badge-info");
+                document.getElementById("btnDealer1").classList.add("badge-light");
+                document.getElementById("txtSubmit").disabled = false;
+                document.getElementById("FirstDealer").value = document.getElementById("Player4Id").value;
+                alert("4");
+                break;
+        }
+    }
+
+    function AutoRefresh(t) {
+        setTimeout("location.reload(true);", t);
+    }
+</script>

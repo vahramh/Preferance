@@ -1,0 +1,273 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+/* Container holding the image and the text */
+.boardcontainer {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.player1 {
+    position: absolute;
+    top: 42%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.player2 {
+    position: absolute;
+    top: 49%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+}
+
+.player3 {
+    position: absolute;
+    top: 56%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.player4 {
+    position: absolute;
+    top: 49%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+}
+
+.player1pool {
+    position: absolute;
+    top: 17%;
+    left: 25%;
+    width: 50%;
+    height: 8%;
+    overflow:hidden;
+    text-wrap:normal;
+    text-align:left;
+}
+
+.player2pool {
+    position: absolute;
+    top: 22%;
+    left: 78%;
+    max-width: 5%;
+    height: 70%;
+    overflow: hidden;
+    text-wrap: normal;
+    word-wrap:break-word;
+}
+
+.player3pool {
+    position: absolute;
+    top: 76%;
+    left: 25%;
+    width: 50%;
+    height: 8%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+}
+
+.player4pool {
+    position: absolute;
+    top: 22%;
+    left: 18%;
+    max-width: 5%;
+    height: 70%;
+    overflow: hidden;
+    text-wrap: normal;
+    word-wrap: break-word;
+}
+
+.player1dump {
+    position: absolute;
+    top: 24%;
+    left: 35%;
+    width: 60%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player2dump {
+    position: absolute;
+    top: 33%;
+    left: 65%;
+    width: 30%;
+    height: 40%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player3dump {
+    position: absolute;
+    top: 62%;
+    left: 35%;
+    width: 60%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player4dump {
+    position: absolute;
+    top: 33%;
+    left: 25%;
+    width: 50%;
+    height: 40%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player12whist {
+    position: absolute;
+    top: 1%;
+    left: 70%;
+    width: 60%;
+    height: 10%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player13whist {
+    position: absolute;
+    top: 1%;
+    left: 40%;
+    width: 60%;
+    height: 10%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player14whist {
+    position: absolute;
+    top: 1%;
+    left: 10%;
+    width: 20%;
+    height: 10%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player21whist {
+    position: absolute;
+    top: 13%;
+    left: 85%;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player24whist {
+    position: absolute;
+    top: 35%;
+    left: 85%;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player23whist {
+    position: absolute;
+    top: 61%;
+    left: 85%;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player31whist {
+    position: absolute;
+    top: 82%;
+    left: 40%;
+    width: 60%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player32whist {
+    position: absolute;
+    top: 82%;
+    left: 67%;
+    width: 60%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player34whist {
+    position: absolute;
+    top: 82%;
+    left: 15%;
+    width: 20%;
+    height: 10%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player41whist {
+    position: absolute;
+    top: 13%;
+    left: 1%;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player42whist {
+    position: absolute;
+    top: 35%;
+    left: 1%;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.player43whist {
+    position: absolute;
+    top: 61%;
+    left: 1%;
+    width: 20%;
+    height: 20%;
+    overflow: hidden;
+    text-wrap: normal;
+    text-align: left;
+    word-wrap: break-word;
+}

@@ -1,0 +1,888 @@
+﻿@model Preferance.Models.Match
+
+@{
+    ViewData["Title"] = "Match";
+}
+
+<div>
+    <table style="background-color:aquamarine;width:100%;border:thin">
+        <tr style="width:100%;text-align:center;font-weight:400">
+
+            <!-- Player name and Deal button -->
+
+            @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == ViewBag.Player)
+            {
+            @if (Model.Games[Model.Games.Count - 1].Player1.Id == ViewBag.Player)
+                    {
+            <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].Player1.Name</td>
+                    }
+            @if (Model.Games[Model.Games.Count - 1].Player2.Id == ViewBag.Player)
+                    {
+            <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].Player2.Name</td>
+                    }
+            @if (Model.Games[Model.Games.Count - 1].Player3.Id == ViewBag.Player)
+                    {
+            <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].Player3.Name</td>
+                    }
+            @if (Model.Games[Model.Games.Count - 1].Player4.Id == ViewBag.Player)
+                    {
+            <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].Player4.Name</td>
+                    }
+            }
+            else
+            {
+            @if (Model.Games[Model.Games.Count - 1].Player1.Id == ViewBag.Player)
+                {
+            <td colspan="4">@Model.Games[Model.Games.Count - 1].Player1.Name</td>
+                }
+            @if (Model.Games[Model.Games.Count - 1].Player2.Id == ViewBag.Player)
+                {
+            <td colspan="4">@Model.Games[Model.Games.Count - 1].Player2.Name</td>
+                }
+            @if (Model.Games[Model.Games.Count - 1].Player3.Id == ViewBag.Player)
+                {
+            <td colspan="4">@Model.Games[Model.Games.Count - 1].Player3.Name</td>
+                }
+            @if (Model.Games[Model.Games.Count - 1].Player4.Id == ViewBag.Player)
+                {
+            <td colspan="4">@Model.Games[Model.Games.Count - 1].Player4.Name</td>
+                }
+            }
+            <td>
+                @if (Model.Games[Model.Games.Count - 1].Status == "Dealing")
+                {
+                @if (@ViewBag.Dealer == @ViewBag.Player)
+                    {
+                <input type="button" value="Deal" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&deal=true")'" />
+                    }
+                }
+            </td>
+        </tr>
+        <tr style="background-color:aqua">
+
+            <!-- Titles -->
+            <td>Bid</td>
+            <td>Dealer</td>
+            <td>Active</td>
+            <td>Next</td>
+            <td>Status</td>
+        </tr>
+        <tr>
+            <!-- Bidding Progress Status -->
+            <td style="width:20%">
+                @if (!((Model.Games[Model.Games.Count - 1].Type == "All-Pass") || (Model.Games[Model.Games.Count - 1].Value == 0) || (Model.Games[Model.Games.Count - 1].Type == "Misere")))
+                {
+                <label>@Model.Games[Model.Games.Count - 1].Value &nbsp; @Model.Games[Model.Games.Count - 1].Type</label>
+                }
+                else
+                {
+                @if (Model.Games[Model.Games.Count - 1].Type == "Misere")
+                    {
+                <label>Misère</label>
+                    }
+                    else
+                    {
+                <label>All Pass &nbsp;</label>
+                    }
+                }
+            </td>
+            <td style="width:20%">@Model.Games[Model.Games.Count - 1].Dealer.Name</td>
+            <td style="width:20%">@Model.Games[Model.Games.Count - 1].ActivePlayer.Name</td>
+            <td style="width:20%;color:red">@Model.Games[Model.Games.Count - 1].NextPlayer.Name</td>
+            <td style="width:20%"><label>@Model.Games[Model.Games.Count - 1].Status</label></td>
+        </tr>
+        <tr>
+            <!-- Bidding buttons -->
+            <td>
+                @if (Model.Games[Model.Games.Count - 1].Status == "Opening")
+                {
+                    @if (Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player)
+                    {
+                        <input type="button" value="Open Play" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&whist=open")'" />
+                    }
+                }
+                @if (Model.Games[Model.Games.Count - 1].Status == "Bidding")
+                {
+                    @if ((@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].MisereOffered == ""))
+                    {
+                        <input type="button" value="Bid" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=bid")'" />
+                    }
+                }
+
+            </td>
+            <td>
+                @if (Model.Games[Model.Games.Count - 1].Status == "Opening")
+    {
+                @if (Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player)
+        {
+                <input type="button" value="Closed Play" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&whist=close")'" />
+        }
+    }
+                @if (Model.Games[Model.Games.Count - 1].Status == "Bidding")
+    {
+                @if ((@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].MisereOffered == ""))
+        {
+                <input type="button" value="Pass" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+        }
+    }
+
+            </td>
+            <td>
+                @if (Model.Games[Model.Games.Count - 1].Status == "Bidding")
+    {
+                @if ((@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].MisereOffered == ""))
+        {
+                @if (Model.Games[Model.Games.Count - 1].MiserePossible)
+            {
+                <input type="button" value="Misère" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=Misere")'" />
+            }
+        }
+    }
+            </td>
+            <td>
+                @if (Model.Games[Model.Games.Count - 1].Status == "Bidding")
+    {
+                @if ((@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].MisereOffered == ""))
+        {
+                @if (Model.Games[Model.Games.Count - 1].MiserePossible)
+            {
+                @if (Model.Games[Model.Games.Count - 1].MisereSharable)
+                {
+                <input type="button" value="Offer Misère" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=offer")'" />
+                }
+            }
+        }
+    }
+            </td>
+            <td>
+                @if ((Model.Games[Model.Games.Count - 1].Status == "Bidding") & (Model.Games[Model.Games.Count - 1].HerePossible) & (Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player))
+                {
+                    <input type="button" value="Here" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=here")'" />
+                }
+            </td>
+        </tr>
+        <tr>
+            <!-- Own Cards -->
+            <td colspan="5">
+                <!-- Accept Misere -->
+                @if (!(Model.Games[Model.Games.Count - 1].Talon == null))
+    {
+                @if (@Model.Games[Model.Games.Count - 1].Player1.Id == @ViewBag.Player)
+        {
+            var handcards = Model.Games[Model.Games.Count - 1].Player1Hand.Cards;
+                @foreach (var card in handcards)
+            {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+            }
+        }
+                @if (@Model.Games[Model.Games.Count - 1].Player2.Id == @ViewBag.Player)
+        {
+            var handcards = Model.Games[Model.Games.Count - 1].Player2Hand.Cards;
+                @foreach (var card in handcards)
+            {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+            }
+        }
+                @if (@Model.Games[Model.Games.Count - 1].Player3.Id == @ViewBag.Player)
+        {
+            var handcards = Model.Games[Model.Games.Count - 1].Player3Hand.Cards;
+                @foreach (var card in handcards)
+            {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+            }
+        }
+                @if (@Model.Games[Model.Games.Count - 1].Player4.Id == @ViewBag.Player)
+        {
+            var handcards = Model.Games[Model.Games.Count - 1].Player4Hand.Cards;
+                @foreach (var card in handcards)
+            {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+            }
+        }
+
+                @if ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].MisereOffered == "")))
+        {
+                @if (@Model.Games[Model.Games.Count - 1].Player1.Id == @Model.Games[Model.Games.Count - 1].MisereOffered)
+            {
+                var handcards = Model.Games[Model.Games.Count - 1].Player1Hand.Cards;
+                @foreach (var card in handcards)
+                {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                }
+            }
+                @if (@Model.Games[Model.Games.Count - 1].Player2.Id == @Model.Games[Model.Games.Count - 1].MisereOffered)
+            {
+                var handcards = Model.Games[Model.Games.Count - 1].Player2Hand.Cards;
+                @foreach (var card in handcards)
+                {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                }
+            }
+                @if (@Model.Games[Model.Games.Count - 1].Player3.Id == @Model.Games[Model.Games.Count - 1].MisereOffered)
+            {
+                var handcards = Model.Games[Model.Games.Count - 1].Player3Hand.Cards;
+                @foreach (var card in handcards)
+                {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                }
+            }
+                @if (@Model.Games[Model.Games.Count - 1].Player4.Id == @Model.Games[Model.Games.Count - 1].MisereOffered)
+            {
+                var handcards = Model.Games[Model.Games.Count - 1].Player4Hand.Cards;
+                @foreach (var card in handcards)
+                {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                }
+            }
+        }
+                }
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <!-- Whist button -->
+                @if (Model.Games[Model.Games.Count - 1].Status == "Whisting")
+    {
+                @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player)
+        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Whist" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=whist")'" />
+}
+                }
+                <!-- Accept Misere -->
+                @if ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].MisereOffered == "")))
+        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Accept Misère" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=accept")'" />
+}
+            </td>
+            <td>
+                <!-- Reject Misere -->
+                @if ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].MisereOffered == "")))
+        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Reject Misère" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=reject")'" />
+}
+                <!-- In whisting, pass / take 1 etc button -->
+                @if (Model.Games[Model.Games.Count - 1].Status == "Whisting")
+    {
+                @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player)
+        {
+                @if (@Model.Games[Model.Games.Count - 1].Player1.Id == @ViewBag.Player)
+            {
+                @if ((@Model.Games[Model.Games.Count - 1].Player2.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id) || ((@Model.Games[Model.Games.Count - 1].Player2.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id) & (@Model.Games[Model.Games.Count - 1].Player3.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id)))
+                {
+
+                    <!-- I'm the second whister-->
+
+ <!-- Who's the first whister?-->
+
+                @if (@Model.Games[Model.Games.Count - 1].Player4.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id)
+                    {
+                        <!-- Player 3 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player3Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+                    else
+                    {
+ <!-- Player 4 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player4Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+ <!-- I'm the first whister -->
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                }
+
+            }
+
+                @if (@Model.Games[Model.Games.Count - 1].Player2.Id == @ViewBag.Player)
+            {
+                @if ((@Model.Games[Model.Games.Count - 1].Player3.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id) || ((@Model.Games[Model.Games.Count - 1].Player3.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id) & (@Model.Games[Model.Games.Count - 1].Player4.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id)))
+                {
+
+                    <!-- I'm the second whister-->
+
+ <!-- Who's the first whister?-->
+
+                @if (@Model.Games[Model.Games.Count - 1].Player1.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id)
+                    {
+                        <!-- Player 4 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player4Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+                    else
+                    {
+ <!-- Player 1 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player1Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+ <!-- I'm the first whister -->
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                }
+
+            }
+
+                @if (@Model.Games[Model.Games.Count - 1].Player3.Id == @ViewBag.Player)
+            {
+                @if ((@Model.Games[Model.Games.Count - 1].Player4.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id) || ((@Model.Games[Model.Games.Count - 1].Player4.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id) & (@Model.Games[Model.Games.Count - 1].Player1.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id)))
+                {
+
+                    <!-- I'm the second whister-->
+
+ <!-- Who's the first whister?-->
+
+                @if (@Model.Games[Model.Games.Count - 1].Player2.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id)
+                    {
+                        <!-- Player 1 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player1Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+                    else
+                    {
+ <!-- Player 2 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player2Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+ <!-- I'm the first whister -->
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                }
+
+            }
+
+                @if (@Model.Games[Model.Games.Count - 1].Player4.Id == @ViewBag.Player)
+            {
+                @if ((@Model.Games[Model.Games.Count - 1].Player1.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id) || ((@Model.Games[Model.Games.Count - 1].Player1.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id) & (@Model.Games[Model.Games.Count - 1].Player2.Id == @Model.Games[Model.Games.Count - 1].ActivePlayer.Id)))
+                {
+
+                    <!-- I'm the second whister-->
+
+ <!-- Who's the first whister?-->
+
+                @if (@Model.Games[Model.Games.Count - 1].Player3.Id == @Model.Games[Model.Games.Count - 1].Dealer.Id)
+                    {
+                        <!-- Player 2 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player2Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+                    else
+                    {
+ <!-- Player 3 is the first whister -->
+                @if (@Model.Games[Model.Games.Count - 1].Player3Whisting == 1)
+                        {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                        }
+                        else
+                        {
+                @if (@Model.Games[Model.Games.Count - 1].Value == 6)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 2" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value == 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Take 1" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=take")'" />
+                            }
+                @if (@Model.Games[Model.Games.Count - 1].Value > 7)
+                            {
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+ <!-- I'm the first whister -->
+                <input type="button" class="btn-block badge-pill badge-info" value="Pass" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                }
+
+            }
+        }
+    }
+
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            @if (@Model.Games[Model.Games.Count - 1].Status == "Ordering")
+    {
+            <td>Talon:</td>
+            }
+        </tr>
+        <tr>
+            <td colspan="5">
+                @if (@Model.Games[Model.Games.Count - 1].Status == "Ordering")
+    {
+                var handcards = Model.Games[Model.Games.Count - 1].Talon.Cards;
+                @foreach (var card in handcards)
+        {
+                <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:8%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+        }
+    }
+            </td>
+        </tr>
+        <tr>
+            @if (@Model.Games[Model.Games.Count - 1].Status == "Ordering")
+    {
+            @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @ViewBag.Player)
+        {
+            @if (@Model.Games[Model.Games.Count - 1].Type == "Misere")
+            {
+            <td>Misère</td>
+            }
+            else
+            {
+            <td>Final Order</td>
+            }
+            }
+            }
+            @if (@Model.Games[Model.Games.Count - 1].Status == "Ordering")
+    {
+            @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @ViewBag.Player)
+        {
+            @if (!(@Model.Games[Model.Games.Count - 1].Type == "Misere"))
+            {
+            <td>
+                <select id="olValue">
+                    <option>6</option>
+                    <option>7</option>
+                    <option>8</option>
+                    <option>9</option>
+                    <option>10</option>
+                    <option>Jack</option>
+                    <option>Queen</option>
+                    <option>King</option>
+                    <option>Ace</option>
+                </select>
+            </td>
+                }
+                }
+                }
+            @if (@Model.Games[Model.Games.Count - 1].Status == "Ordering")
+    {
+            @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @ViewBag.Player)
+        {
+            @if (!(@Model.Games[Model.Games.Count - 1].Type == "Misere"))
+            {
+            <td>
+                <select id="olSuit">
+                    <option>Spades</option>
+                    <option>Clubs</option>
+                    <option>Diamonds</option>
+                    <option>Hearts</option>
+                    <option>No Trump</option>
+                </select>
+            </td>
+                }
+                }
+                }
+            @if (@Model.Games[Model.Games.Count - 1].Status == "Ordering")
+    {
+            @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @ViewBag.Player)
+        {
+            <td colspan="2">
+                <button id="btnDiscard" onclick="placeOrder()" class="btn-block badge-pill badge-info" hidden>Discard Selected Cards and Start the Game</button>
+            </td>
+                }
+                }
+        </tr>
+    </table>
+
+</div>
+<input id="discarded1" value="" hidden />
+<input id="discarded2" value="" hidden />
+
+<div>
+
+    <partial name="\..\Shared\Board" model=@Model />
+
+</div>
+
+<script>
+
+    function AutoRefresh(t) {
+        setTimeout("location.reload(true);", t);
+    }
+
+    function placeOrder() {
+        var selValue = document.getElementById("olValue");
+        var selSuit = document.getElementById("olSuit");
+        if (!("@Model.Games[Model.Games.Count - 1].Type" == "Misere")) {
+            if (compareCardNames(selValue.options[selValue.selectedIndex].text + "_" + selSuit.options[selSuit.selectedIndex].text, "@Model.Games[Model.Games.Count - 1].Value" + "_" + "@Model.Games[Model.Games.Count - 1].Type") < 0) {
+                alert("Your order is lower than your bid");
+                return;
+            }
+        }
+        var refer = "/../Matches/Play?id=" + "@Model.Id" + "&bid=order";
+        if ("@Model.Games[Model.Games.Count - 1].Type" == "Misere") {
+            refer = refer + "&type=Misere" + "&discard1value=" + document.getElementById("discarded1").value.substring(3, document.getElementById("discarded1").value.indexOf("_")) + "&discard1suit=" + document.getElementById("discarded1").value.substring(document.getElementById("discarded1").value.indexOf("_") + 1, 100) + "&discard2value=" + document.getElementById("discarded2").value.substring(3, document.getElementById("discarded2").value.indexOf("_")) + "&discard2suit=" + document.getElementById("discarded2").value.substring(document.getElementById("discarded2").value.indexOf("_") + 1, 100);
+        }
+        else {
+            refer = refer + "&type=" + selSuit.options[selSuit.selectedIndex].text + "&value=" + selValue.options[selValue.selectedIndex].text + "&discard1value=" + document.getElementById("discarded1").value.substring(3, document.getElementById("discarded1").value.indexOf("_")) + "&discard1suit=" + document.getElementById("discarded1").value.substring(document.getElementById("discarded1").value.indexOf("_") + 1, 100) + "&discard2value=" + document.getElementById("discarded2").value.substring(3, document.getElementById("discarded2").value.indexOf("_")) + "&discard2suit=" + document.getElementById("discarded2").value.substring(document.getElementById("discarded2").value.indexOf("_") + 1, 100);
+        }
+        window.location.href = refer;
+        return;
+    }
+
+    function compareCardNames(a, b) {
+        return (getCardValue(a) - getCardValue(b));
+    }
+
+    function getCardValue(a) {
+        var res = 0;
+        var suit = (a.substring(a.indexOf("_") + 1, 100));
+        var val = a.substring(0, a.indexOf("_"));
+
+        if (val == "7") {
+            res = 10;
+        }
+        if (val == "8") {
+            res = 20;
+        }
+        if (val == "9") {
+            res = 30;
+        }
+        if (val == "10") {
+            res = 40;
+        }
+        if (val == "Jack") {
+            res = 50;
+        }
+        if (val == "Queen") {
+            res = 60;
+        }
+        if (val == "King") {
+            res = 70;
+        }
+        if (val == "Ace") {
+            res = 80;
+        }
+
+        if (suit == "Clubs") {
+            res = res + 1;
+        }
+        if (suit == "Diamonds") {
+            res = res + 2;
+        }
+        if (suit == "Hearts") {
+            res = res + 3;
+        }
+        if (suit == "No Trump") {
+            res = res + 4;
+        }
+
+        return res;
+    }
+
+    function cardClick(v, c) {
+        if (!(("@Model.Games[Model.Games.Count - 1].ActivePlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Ordering"))) {
+            return;
+        }
+
+        var s = "img" + v + "_" + c;
+        if (document.getElementById("discarded1").value == "") {
+            document.getElementById(s).style.border = "thick solid gold";
+            document.getElementById("discarded1").value = s;
+            document.getElementById("btnDiscard").hidden = true;
+        }
+        else {
+            if (document.getElementById("discarded1").value == s) {
+                document.getElementById(s).style.border = "0px solid gold";
+                document.getElementById("discarded1").value = document.getElementById("discarded2").value;
+                document.getElementById("discarded2").value = "";
+                document.getElementById("btnDiscard").hidden = true;
+            }
+            else {
+                if (document.getElementById("discarded2").value == "") {
+                    document.getElementById(s).style.border = "thick solid gold";
+                    document.getElementById("discarded2").value = s;
+                    document.getElementById("btnDiscard").hidden = false;
+                }
+                else {
+                    if (document.getElementById("discarded2").value == s) {
+                        document.getElementById(s).style.border = "0px solid gold";
+                        document.getElementById("discarded2").value = "";
+                        document.getElementById("btnDiscard").hidden = true;
+                    }
+                    else {
+                        alert("Cannot discard more than 2 cards");
+                    }
+                }
+            }
+        }
+    }
+
+    function sortCardArray(inputCards) {
+        var outputCards = inputCards;
+        var x;
+
+        for (i = 0; i < inputCards.Length; i++)
+        {
+            for (j = 1; j < inputCards.Length; j++) {
+                if (compareCards(outputCards[j - 1], outputCards[j])) {
+                    x = outputCards[j - 1];
+                    outputCards[j - 1] = outputCards[j];
+                    outputCards[j] = x;
+                }
+            }
+        }
+        return outputCards;
+    }
+
+    function compareCards(a, b) {
+        if ((a.Colour == "Spades") & (!(b.Colour == "Spades"))) {
+            return -1;
+        }
+        else {
+            if ((a.Colour == "Diamonds") & (!(b.Colour == "Diamonds"))) {
+                if (b.Colour == "Spades") {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            }
+            else {
+                if ((a.Colour == "Clubs") & (!(b.Colour == "Clubs"))) {
+                    if (b.Colour == "Hearts") {
+                        return -1;
+                    }
+                    else {
+                        return 1;
+                    }
+                }
+                else {
+                    if ((a.Colour == "Hearts") & (!(b.Colour == "Hearts"))) {
+                        return 1;
+                    }
+                }
+            }
+        }
+        if (a.Value == "Ace") {
+            return 1;
+        }
+        else {
+            if (a.Value == "King") {
+                if (b.Value == "Ace") {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            }
+            else {
+                if (a.Value == "Queen") {
+                    if ((b.Value == "King") || (b.Value == "Ace")) {
+                        return -1;
+                    }
+                    else {
+                        return 1;
+                    }
+                }
+                else {
+                    if (a.Value == "Jack") {
+                        if ((b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                            return -1;
+                        }
+                        else {
+                            return 1;
+                        }
+                    }
+                    else {
+                        if (a.Value == "10") {
+                            if ((b.Value == "Jack") || (b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                                return -1;
+                            }
+                            else {
+                                return 1;
+                            }
+                        }
+                        else {
+                            if (a.Value == "9") {
+                                if ((b.Value == "10") || (b.Value == "Jack") || (b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                                    return -1;
+                                }
+                                else {
+                                    return 1;
+                                }
+                            }
+                            else {
+                                if (a.Value == "8") {
+                                    if ((b.Value == "9") || (b.Value == "10") || (b.Value == "Jack") || (b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                                        return -1;
+                                    }
+                                    else {
+                                        return 1;
+                                    }
+                                }
+                                else {
+                                    return -1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    window.onload = function()
+    {
+        var str = window.location.href;
+        if (str.indexOf("&bid") > 0) {
+            window.location.href = str.substring(0, str.indexOf("&bid"));
+        }
+        if (("@ViewBag.Dealer" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Dealing")) {
+            return;
+        }
+        if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Whisting")) {
+            return;
+        }
+        if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Opening")) {
+            return;
+        }
+        if (("@Model.Games[Model.Games.Count - 1].ActivePlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Ordering")) {
+            return;
+        }
+        if ("@Model.Games[Model.Games.Count - 1].Status" == "Bidding") {
+            if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].MisereOffered" == "")) {
+                return;
+            }
+        }
+        if (("@Model.Games[Model.Games.Count - 1].Status" == "Bidding") & (!("@Model.Games[Model.Games.Count - 1].MisereOffered" == ""))) {
+            if ("@Model.Games[Model.Games.Count - 1].Dealer.Id" == "@ViewBag.Player") {
+                return;
+            }
+        }
+        AutoRefresh(3000);
+    }
+</script>

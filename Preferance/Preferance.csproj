@@ -1,0 +1,109 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-Preferance-B0FC9E94-D6A3-4E82-AFC4-39F8CB125D75</UserSecretsId>
+    <GenerateRuntimeConfigurationFiles>True</GenerateRuntimeConfigurationFiles>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.cs" />
+    <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200818065430_CreateIdentitySchema1.cs" />
+    <Compile Remove="Data\Migrations\20200818065430_CreateIdentitySchema1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822110110_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822110110_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822110440_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822110440_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822110755_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822110755_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822111336_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822111336_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822111531_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822111531_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822111721_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822111721_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822112007_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822112007_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822112133_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822112133_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822112214_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822112214_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822112444_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822112444_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822112837_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822112837_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822112944_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822112944_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822113132_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822113132_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822113255_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822113255_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822113409_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822113409_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822113529_Deck.cs" />
+    <Compile Remove="Data\Migrations\20200822113529_Deck.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822113619_Deck2.cs" />
+    <Compile Remove="Data\Migrations\20200822113619_Deck2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822114150_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822114150_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822114608_Initial.cs" />
+    <Compile Remove="Data\Migrations\20200822114608_Initial.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200822230919_EnhanceMatch.cs" />
+    <Compile Remove="Data\Migrations\20200822230919_EnhanceMatch.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200823013337_EnhanceMatch1.cs" />
+    <Compile Remove="Data\Migrations\20200823013337_EnhanceMatch1.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200903071148_GameEnrich.cs" />
+    <Compile Remove="Data\Migrations\20200903071148_GameEnrich.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200904070558_Enrich.cs" />
+    <Compile Remove="Data\Migrations\20200904070558_Enrich.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200904102452_Enrich2.cs" />
+    <Compile Remove="Data\Migrations\20200904102452_Enrich2.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905023947_Enrich3.cs" />
+    <Compile Remove="Data\Migrations\20200905023947_Enrich3.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905065705_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905065705_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905065902_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905065902_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905070038_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905070038_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905070127_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905070127_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905070301_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905070301_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905071203_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905071203_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905071515_Enrich4.cs" />
+    <Compile Remove="Data\Migrations\20200905071515_Enrich4.Designer.cs" />
+    <Compile Remove="Data\Migrations\20200905071623_Enrich5.cs" />
+    <Compile Remove="Data\Migrations\20200905071623_Enrich5.Designer.cs" />
+    <Compile Remove="Migrations\20200905072452_Initial.cs" />
+    <Compile Remove="Migrations\20200905072452_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200913114016_matchgame.cs" />
+    <Compile Remove="Migrations\20200913114016_matchgame.Designer.cs" />
+    <Compile Remove="Migrations\20200918041455_cardsequence.cs" />
+    <Compile Remove="Migrations\20200918041455_cardsequence.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Images\Board.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Data\Migrations\" />
+  </ItemGroup>
+
+</Project>
