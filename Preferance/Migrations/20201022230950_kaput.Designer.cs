@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Preferance.Data;
 
 namespace Preferance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201022230950_kaput")]
+    partial class kaput
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -511,9 +513,6 @@ namespace Preferance.Migrations
                     b.Property<int>("NorthSouthPoints")
                         .HasColumnType("int");
 
-                    b.Property<string>("OpenCardsId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("SouthHandId")
                         .HasColumnType("nvarchar(450)");
 
@@ -560,8 +559,6 @@ namespace Preferance.Migrations
                     b.HasIndex("NorthId");
 
                     b.HasIndex("NorthSouthHandResultId");
-
-                    b.HasIndex("OpenCardsId");
 
                     b.HasIndex("SouthHandId");
 
@@ -1050,10 +1047,6 @@ namespace Preferance.Migrations
                     b.HasOne("Preferance.Models.HandB", "NorthSouthHandResult")
                         .WithMany()
                         .HasForeignKey("NorthSouthHandResultId");
-
-                    b.HasOne("Preferance.Models.HandB", "OpenCards")
-                        .WithMany()
-                        .HasForeignKey("OpenCardsId");
 
                     b.HasOne("Preferance.Models.HandB", "SouthHand")
                         .WithMany()

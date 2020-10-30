@@ -13,20 +13,20 @@ using Preferance.Models;
 
 namespace Preferance.Controllers
 {
-    public class GamesController : Controller
+    public class GamesBController : Controller
     {
         private readonly ApplicationDbContext _context;
 
         ErrorViewModel errorView = null;
 
-        public GamesController(ApplicationDbContext context)
+        public GamesBController(ApplicationDbContext context)
         {
             _context = context;
         }
 
         public async Task<IActionResult> Play(string id, string move = "", string cardSuit = "", string cardValue = "")
         {
-            Card playedCard = new Card();
+            CardB playedCard = new CardB();
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
             string UUID = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
             if (UUID == null)
@@ -38,43 +38,49 @@ namespace Preferance.Controllers
                 return View("Error", errorView);
             }
 
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games).Include(o => o.LastHand)
+            var match = _context.MatchB.Include(o => o.Games).Include(o => o.North).Include(o => o.South).Include(o => o.East).Include(o => o.West).Include(o => o.LastHand)
                 .ThenInclude(h => h.Cards)
               .FirstOrDefault(m => m.Id == id);
 
-            match.LastHand.Cards = _context.Card.Where(c => c.HandId == match.LastHand.Id).OrderBy(c => c.Sequence).ToList();
+            match.Games = _context.GameB.OrderBy(o => o.Id).Where(g => g.MatchBId == match.Id).ToList();
 
-            Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
-                .Include(o => o.Player1Hand).Include(o => o.Player2Hand).Include(o => o.Player3Hand).Include(o => o.Player4Hand)
+            match.LastHand.Cards = _context.CardB.Where(c => c.HandBId == match.LastHand.Id).OrderBy(c => c.Sequence).ToList();
+
+            GameB game = _context.GameB.Where(m => m.MatchBId == match.Id).OrderByDescending(g => g.Id).Take(1)
+                .Include(o => o.North).Include(o => o.South).Include(o => o.East).Include(o => o.West)
+                .Include(o => o.NorthHand).Include(o => o.SouthHand).Include(o => o.EastHand).Include(o => o.WestHand)
                 .Include(o => o.HandInPlay)
-                .Include(o => o.Player1HandResult).ThenInclude(p => p.hands).ThenInclude(q => q.Cards)
-                .Include(o => o.Player2HandResult).ThenInclude(p => p.hands).ThenInclude(q => q.Cards)
-                .Include(o => o.Player3HandResult).ThenInclude(p => p.hands).ThenInclude(q => q.Cards)
-                .Include(o => o.Player4HandResult).ThenInclude(p => p.hands).ThenInclude(q => q.Cards)
-                .Include(o => o.Talon).Include(o => o.HighCard)
+                .Include(o => o.OpenCards).ThenInclude(q => q.Cards)
+                .Include(o => o.NorthSouthHandResult).ThenInclude(q => q.Cards)
+                .Include(o => o.EastWestHandResult).ThenInclude(q => q.Cards)
                 .ToList()[0];
             if ((game.Status == "Dealing") || (game.Status == "Bidding"))
             {
-                Response.Redirect("/../../Matches/Play/" + id);
+                Response.Redirect("/../../MatchesB/Play/" + id);
                 errorView = new ErrorViewModel();
                 return View("Error", errorView);
             }
 
-            game.Player1Hand.Cards = _context.Card.Where(c => c.HandId == game.Player1Hand.Id).OrderBy(c => c.Seniority).ToList();
-            game.Player2Hand.Cards = _context.Card.Where(c => c.HandId == game.Player2Hand.Id).OrderBy(c => c.Seniority).ToList();
-            game.Player3Hand.Cards = _context.Card.Where(c => c.HandId == game.Player3Hand.Id).OrderBy(c => c.Seniority).ToList();
-            game.Player4Hand.Cards = _context.Card.Where(c => c.HandId == game.Player4Hand.Id).OrderBy(c => c.Seniority).ToList();
-            game.Talon.Cards = _context.Card.Where(c => c.HandId == game.Talon.Id).ToList();
+            if (game.OpenCards == null)
+            {
+                game.OpenCards = new HandB();
+                game.OpenCards.Id = Guid.NewGuid().ToString();
+                game.OpenCards.Cards = new List<CardB>();
+            }
+            game.NorthHand.Cards = _context.CardB.Where(c => c.HandBId == game.NorthHand.Id).OrderBy(c => c.Seniority).ToList();
+            game.SouthHand.Cards = _context.CardB.Where(c => c.HandBId == game.SouthHand.Id).OrderBy(c => c.Seniority).ToList();
+            game.EastHand.Cards = _context.CardB.Where(c => c.HandBId == game.EastHand.Id).OrderBy(c => c.Seniority).ToList();
+            game.WestHand.Cards = _context.CardB.Where(c => c.HandBId == game.WestHand.Id).OrderBy(c => c.Seniority).ToList();
 
             if (game.HandInPlay == null)
             {
-                game.HandInPlay = new Hand();
+                game.HandInPlay = new HandB();
                 game.HandInPlay.Id = Guid.NewGuid().ToString();
-                game.HandInPlay.Cards = new List<Card>();
+                game.HandInPlay.Cards = new List<CardB>();
             }
             else
             {
-                game.HandInPlay.Cards = _context.Card.Where(c => c.HandId == game.HandInPlay.Id).OrderBy(c => c.Sequence).ToList();
+                game.HandInPlay.Cards = _context.CardB.Where(c => c.HandBId == game.HandInPlay.Id).OrderBy(c => c.Sequence).ToList();
             }
 
             if (move == "")
@@ -88,17 +94,12 @@ namespace Preferance.Controllers
             if (move == "collect")
             {
                 Collect(game, move);
-                if ((game.Type == "All-Pass") & (game.Talon.Cards.Count > 0))
-                {
-                    game.NextPlayer = game.Dealer;
-                }
-
                 _context.SaveChanges();
 
-                
-                if (game.Player1Hand.Cards.Count + game.Player2Hand.Cards.Count == 0)
+
+                if (game.NorthHand.Cards.Count + game.SouthHand.Cards.Count + game.EastHand.Cards.Count + game.WestHand.Cards.Count == 0)
                 {
-                    Response.Redirect("/../../Matches/CompleteGame/" + id);
+                    Response.Redirect("/../../MatchesB/CompleteGame/" + id);
                     errorView = new ErrorViewModel();
                     return View("Error", errorView);
                 }
@@ -106,29 +107,9 @@ namespace Preferance.Controllers
 
             if (move == "Move")
             {
-                if (game.NextPlayer.Id == game.Dealer.Id)
+                if (game.NextPlayer.Id == game.North.Id)
                 {
-                    // Playing All-Pass, dealer's move
-
-                    playedCard = game.Talon.Cards[0];
-                    if (game.HandInPlay.Cards.Count == 0)
-                    {
-                        playedCard.Sequence = 1;
-                    }
-                    else
-                    {
-                        playedCard.Sequence = game.HandInPlay.Cards.Max(m => m.Sequence) + 1;
-                    }
-                    game.HandInPlay.Cards.Add(playedCard);
-                    game.Talon.Cards.Remove(playedCard);
-                    game.HighCardPlayer = game.NextPlayer;
-                    game.HighCard = playedCard;
-
-                }
-
-                if (game.NextPlayer.Id == game.Player1.Id)
-                {
-                    foreach (Card card in game.Player1Hand.Cards)
+                    foreach (CardB card in game.NorthHand.Cards)
                     {
                         if ((card.Colour == cardSuit) & (card.Value == cardValue))
                         {
@@ -144,7 +125,7 @@ namespace Preferance.Controllers
                         }
                     }
                     game.HandInPlay.Cards.Add(playedCard);
-                    game.Player1Hand.Cards.Remove(playedCard);
+                    game.NorthHand.Cards.Remove(playedCard);
 
                     if (game.HandInPlay.Cards.Count == 1)
                     {
@@ -157,16 +138,16 @@ namespace Preferance.Controllers
                         {
                             if (game.HighCard.Colour == game.Type)
                             {
-                                if (CardValueGreaterThan(cardValue, game.HighCard.Value))
+                                if (TrumpCardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player1;
+                                    game.HighCardPlayer = game.North;
                                 }
                             }
                             else
                             {
                                 game.HighCard = playedCard;
-                                game.HighCardPlayer = game.Player1;
+                                game.HighCardPlayer = game.North;
                             }
                         }
                         else
@@ -176,7 +157,7 @@ namespace Preferance.Controllers
                                 if (CardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player1;
+                                    game.HighCardPlayer = game.North;
                                 }
                             }
                         }
@@ -184,9 +165,9 @@ namespace Preferance.Controllers
 
                 }
 
-                if (game.NextPlayer.Id == game.Player2.Id)
+                if (game.NextPlayer.Id == game.South.Id)
                 {
-                    foreach (Card card in game.Player2Hand.Cards)
+                    foreach (CardB card in game.SouthHand.Cards)
                     {
                         if ((card.Colour == cardSuit) & (card.Value == cardValue))
                         {
@@ -202,7 +183,7 @@ namespace Preferance.Controllers
                         }
                     }
                     game.HandInPlay.Cards.Add(playedCard);
-                    game.Player2Hand.Cards.Remove(playedCard);
+                    game.SouthHand.Cards.Remove(playedCard);
 
                     if (game.HandInPlay.Cards.Count == 1)
                     {
@@ -215,16 +196,16 @@ namespace Preferance.Controllers
                         {
                             if (game.HighCard.Colour == game.Type)
                             {
-                                if (CardValueGreaterThan(cardValue, game.HighCard.Value))
+                                if (TrumpCardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player2;
+                                    game.HighCardPlayer = game.South;
                                 }
                             }
                             else
                             {
                                 game.HighCard = playedCard;
-                                game.HighCardPlayer = game.Player2;
+                                game.HighCardPlayer = game.South;
                             }
                         }
                         else
@@ -234,16 +215,16 @@ namespace Preferance.Controllers
                                 if (CardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player2;
+                                    game.HighCardPlayer = game.South;
                                 }
                             }
                         }
                     }
                 }
 
-                if (game.NextPlayer.Id == game.Player3.Id)
+                if (game.NextPlayer.Id == game.East.Id)
                 {
-                    foreach (Card card in game.Player3Hand.Cards)
+                    foreach (CardB card in game.EastHand.Cards)
                     {
                         if ((card.Colour == cardSuit) & (card.Value == cardValue))
                         {
@@ -259,7 +240,7 @@ namespace Preferance.Controllers
                         }
                     }
                     game.HandInPlay.Cards.Add(playedCard);
-                    game.Player3Hand.Cards.Remove(playedCard);
+                    game.EastHand.Cards.Remove(playedCard);
 
                     if (game.HandInPlay.Cards.Count == 1)
                     {
@@ -272,16 +253,16 @@ namespace Preferance.Controllers
                         {
                             if (game.HighCard.Colour == game.Type)
                             {
-                                if (CardValueGreaterThan(cardValue, game.HighCard.Value))
+                                if (TrumpCardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player3;
+                                    game.HighCardPlayer = game.East;
                                 }
                             }
                             else
                             {
                                 game.HighCard = playedCard;
-                                game.HighCardPlayer = game.Player3;
+                                game.HighCardPlayer = game.East;
                             }
                         }
                         else
@@ -291,16 +272,16 @@ namespace Preferance.Controllers
                                 if (CardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player3;
+                                    game.HighCardPlayer = game.East;
                                 }
                             }
                         }
                     }
                 }
 
-                if (game.NextPlayer.Id == game.Player4.Id)
+                if (game.NextPlayer.Id == game.West.Id)
                 {
-                    foreach (Card card in game.Player4Hand.Cards)
+                    foreach (CardB card in game.WestHand.Cards)
                     {
                         if ((card.Colour == cardSuit) & (card.Value == cardValue))
                         {
@@ -316,7 +297,7 @@ namespace Preferance.Controllers
                         }
                     }
                     game.HandInPlay.Cards.Add(playedCard);
-                    game.Player4Hand.Cards.Remove(playedCard);
+                    game.WestHand.Cards.Remove(playedCard);
 
                     if (game.HandInPlay.Cards.Count == 1)
                     {
@@ -329,16 +310,16 @@ namespace Preferance.Controllers
                         {
                             if (game.HighCard.Colour == game.Type)
                             {
-                                if (CardValueGreaterThan(cardValue, game.HighCard.Value))
+                                if (TrumpCardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player4;
+                                    game.HighCardPlayer = game.West;
                                 }
                             }
                             else
                             {
                                 game.HighCard = playedCard;
-                                game.HighCardPlayer = game.Player4;
+                                game.HighCardPlayer = game.West;
                             }
                         }
                         else
@@ -348,7 +329,7 @@ namespace Preferance.Controllers
                                 if (CardValueGreaterThan(cardValue, game.HighCard.Value))
                                 {
                                     game.HighCard = playedCard;
-                                    game.HighCardPlayer = game.Player4;
+                                    game.HighCardPlayer = game.West;
                                 }
                             }
                         }
@@ -359,98 +340,37 @@ namespace Preferance.Controllers
                 {
                     game.NextPlayer = game.HighCardPlayer;
                     game = Collect(game);
-                    if ((game.Type == "All-Pass") & (game.Talon.Cards.Count > 0))
+                    _context.SaveChanges();
+                    if (game.NorthHand.Cards.Count == 0)
                     {
-                        game.NextPlayer = game.Dealer;
+                        Response.Redirect("/../../MatchesB/CompleteGame/" + id);
+                        errorView = new ErrorViewModel();
+                        return View("Error", errorView);
                     }
                 }
                 else
                 {
-                    if (game.HandInPlay.Cards.Count == 3)
+                    if (game.NextPlayer.Id == game.North.Id)
                     {
-                        if ((game.Type == "All-Pass") & (game.DealerPlaying))
-                        {
-                            if (game.NextPlayer.Id == game.Player1.Id)
-                            {
-                                game.NextPlayer = game.Player2;
-                            }
-                            else
-                            {
-                                if (game.NextPlayer.Id == game.Player2.Id)
-                                {
-                                    game.NextPlayer = game.Player3;
-                                }
-                                else
-                                {
-                                    if (game.NextPlayer.Id == game.Player3.Id)
-                                    {
-                                        game.NextPlayer = game.Player4;
-                                    }
-                                    else
-                                    {
-                                        if (game.NextPlayer.Id == game.Player4.Id)
-                                        {
-                                            game.NextPlayer = game.Player1;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            game = Collect(game);
-                            if (game.Player1Hand.Cards.Count + game.Player2Hand.Cards.Count == 0)
-                            {
-                                _context.SaveChanges();
-                                Response.Redirect("/../../Matches/CompleteGame/" + game.MatchId);
-                                return View("GameProgress", match);
-                            }
-                            game.NextPlayer = game.HighCardPlayer;
-                        }
+                        game.NextPlayer = game.East;
                     }
                     else
                     {
-                        if (game.HandInPlay.Cards.Count < 3)
+                        if (game.NextPlayer.Id == game.East.Id)
                         {
-                            if (game.NextPlayer.Id == game.Player1.Id)
+                            game.NextPlayer = game.South;
+                        }
+                        else
+                        {
+                            if (game.NextPlayer.Id == game.South.Id)
                             {
-                                game.NextPlayer = game.Player2;
-                                if (game.NextPlayer.Id == game.Dealer.Id)
-                                {
-                                    game.NextPlayer = game.Player3;
-                                }
+                                game.NextPlayer = game.West;
                             }
                             else
                             {
-                                if (game.NextPlayer.Id == game.Player2.Id)
+                                if (game.NextPlayer.Id == game.West.Id)
                                 {
-                                    game.NextPlayer = game.Player3;
-                                    if (game.NextPlayer.Id == game.Dealer.Id)
-                                    {
-                                        game.NextPlayer = game.Player4;
-                                    }
-                                }
-                                else
-                                {
-                                    if (game.NextPlayer.Id == game.Player3.Id)
-                                    {
-                                        game.NextPlayer = game.Player4;
-                                        if (game.NextPlayer.Id == game.Dealer.Id)
-                                        {
-                                            game.NextPlayer = game.Player1;
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (game.NextPlayer.Id == game.Player4.Id)
-                                        {
-                                            game.NextPlayer = game.Player1;
-                                            if (game.NextPlayer.Id == game.Dealer.Id)
-                                            {
-                                                game.NextPlayer = game.Player2;
-                                            }
-                                        }
-                                    }
+                                    game.NextPlayer = game.North;
                                 }
                             }
                         }
@@ -458,7 +378,7 @@ namespace Preferance.Controllers
                 }
 
                 _context.SaveChanges();
-                Response.Redirect("/../../Games/Play/" + id);
+                Response.Redirect("/../../GamesB/Play/" + id);
             }
 
             ViewBag.Player = UUID;
@@ -467,18 +387,18 @@ namespace Preferance.Controllers
             return View("GameProgress", match);
         }
 
-        public Game Collect(Game game, string move = "")
+        public GameB Collect(GameB game, string move = "")
         {
-            var match = _context.Match
-                .FirstOrDefault(m => m.Id == game.MatchId);
+            var match = _context.MatchB
+                .FirstOrDefault(m => m.Id == game.MatchBId);
             if (true)
-//                if (move == "collect")
+            //                if (move == "collect")
+            {
+                if (match.LastHand == null)
                 {
-                    if (match.LastHand == null)
-                {
-                    match.LastHand = new Hand();
+                    match.LastHand = new HandB();
                     match.LastHand.Id = match.Id;
-                    match.LastHand.Cards = new List<Card>();
+                    match.LastHand.Cards = new List<CardB>();
                 }
                 else
                 {
@@ -486,128 +406,108 @@ namespace Preferance.Controllers
                 }
                 foreach (var card in game.HandInPlay.Cards)
                 {
-                    var _card = new Card();
+                    var _card = new CardB();
                     _card.Id = Guid.NewGuid().ToString();
                     _card.Colour = card.Colour;
                     _card.Value = card.Value;
                     _card.Sequence = card.Sequence;
                     _card.Seniority = card.Seniority;
                     match.LastHand.Cards.Add(_card);
+                    if ((game.NextPlayer.Id == game.North.Id) || (game.NextPlayer.Id == game.South.Id))
+                    {
+                        game.NorthSouthPoints = game.NorthSouthPoints + CardValue(game.Type, _card);
+                    }
+                    else
+                    {
+                        game.EastWestPoints = game.EastWestPoints + CardValue(game.Type, _card);
+                    }
+                }
+                if ((game.NextPlayer.Id == game.North.Id) || (game.NextPlayer.Id == game.South.Id))
+                {
+                    if (game.NorthHand.Cards.Count == 0)
+                    {
+                        game.NorthSouthPoints = game.NorthSouthPoints + 10;
+                    }
+                }
+                else
+                {
+                    if (game.NorthHand.Cards.Count == 0)
+                    {
+                        game.EastWestPoints = game.EastWestPoints + 10;
+                    }
                 }
                 game.Status = "Playing";
-                if (game.HighCardPlayer.Id == game.Player1.Id)
+                if ((game.HighCardPlayer.Id == game.North.Id) || (game.HighCardPlayer.Id == game.South.Id))
                 {
-                    if (game.Player1HandResult == null)
+                    if (game.NorthSouthHandResult == null)
                     {
-                        game.Player1HandResult = new SetOfHands();
-                        game.Player1HandResult.Id = Guid.NewGuid().ToString();
-                        game.Player1HandResult.hands = new List<Hand>();
+                        game.NorthSouthHandResult = new HandB();
+                        game.NorthSouthHandResult.Id = Guid.NewGuid().ToString();
+                        game.NorthSouthHandResult.Cards = new List<CardB>();
                     }
-                    Hand collectedHand = new Hand();
-                    collectedHand.Id = Guid.NewGuid().ToString();
-                    collectedHand.Cards = new List<Card>();
-                    foreach (Card card in game.HandInPlay.Cards)
+                    foreach (CardB card in game.HandInPlay.Cards)
                     {
-                        collectedHand.Cards.Add(card);
+                        game.NorthSouthHandResult.Cards.Add(card);
                     }
-                    game.Player1HandResult.hands.Add(collectedHand);
                     game.HandInPlay.Cards.Clear();
                 }
                 else
                 {
-                    if (game.HighCardPlayer.Id == game.Player2.Id)
+                    if (game.EastWestHandResult == null)
                     {
-                        if (game.Player2HandResult == null)
-                        {
-                            game.Player2HandResult = new SetOfHands();
-                            game.Player2HandResult.Id = Guid.NewGuid().ToString();
-                            game.Player2HandResult.hands = new List<Hand>();
-                        }
-                        Hand collectedHand = new Hand();
-                        collectedHand.Id = Guid.NewGuid().ToString();
-                        collectedHand.Cards = new List<Card>();
-                        foreach (Card card in game.HandInPlay.Cards)
-                        {
-                            collectedHand.Cards.Add(card);
-                        }
-                        game.Player2HandResult.hands.Add(collectedHand);
-                        game.HandInPlay.Cards.Clear();
+                        game.EastWestHandResult = new HandB();
+                        game.EastWestHandResult.Id = Guid.NewGuid().ToString();
+                        game.EastWestHandResult.Cards = new List<CardB>();
                     }
-                    else
+                    foreach (CardB card in game.HandInPlay.Cards)
                     {
-                        if (game.HighCardPlayer.Id == game.Player3.Id)
-                        {
-                            if (game.Player3HandResult == null)
-                            {
-                                game.Player3HandResult = new SetOfHands();
-                                game.Player3HandResult.Id = Guid.NewGuid().ToString();
-                                game.Player3HandResult.hands = new List<Hand>();
-                            }
-                            Hand collectedHand = new Hand();
-                            collectedHand.Id = Guid.NewGuid().ToString();
-                            collectedHand.Cards = new List<Card>();
-                            foreach (Card card in game.HandInPlay.Cards)
-                            {
-                                collectedHand.Cards.Add(card);
-                            }
-                            game.Player3HandResult.hands.Add(collectedHand);
-                            game.HandInPlay.Cards.Clear();
-                        }
-                        else
-                        {
-                            if (game.HighCardPlayer.Id == game.Player4.Id)
-                            {
-                                if (game.Player4HandResult == null)
-                                {
-                                    game.Player4HandResult = new SetOfHands();
-                                    game.Player4HandResult.Id = Guid.NewGuid().ToString();
-                                    game.Player4HandResult.hands = new List<Hand>();
-                                }
-                                Hand collectedHand = new Hand();
-                                collectedHand.Id = Guid.NewGuid().ToString();
-                                collectedHand.Cards = new List<Card>();
-                                foreach (Card card in game.HandInPlay.Cards)
-                                {
-                                    collectedHand.Cards.Add(card);
-                                }
-                                game.Player4HandResult.hands.Add(collectedHand);
-                                game.HandInPlay.Cards.Clear();
-                            }
-                        }
-
+                        game.EastWestHandResult.Cards.Add(card);
                     }
+                    game.HandInPlay.Cards.Clear();
                 }
-                if (game.Talon.Cards.Count > 0)
-                {
-                    game.NextPlayer = game.Dealer;
-                }
-                else
-                {
-                    if ((game.DealerPlaying) & (game.Type == "All-Pass"))
-                    {
-                        game.DealerPlaying = false;
-                        if (game.Dealer.Id == game.Player1.Id)
-                        { game.NextPlayer = game.Player2; }
-                        if (game.Dealer.Id == game.Player2.Id)
-                        { game.NextPlayer = game.Player3; }
-                        if (game.Dealer.Id == game.Player3.Id)
-                        { game.NextPlayer = game.Player4; }
-                        if (game.Dealer.Id == game.Player4.Id)
-                        { game.NextPlayer = game.Player1; }
-                    }
-                }
-            }
-            else
-            {
-                game.Status = "Collecting";
-
+                if (game.NorthHand.Cards.Count == 0)
+                { game.Status = "Dealing"; }
             }
             return game;
         }
 
+        public int CardValue(string Trump, CardB card) 
+        {
+            if ((card.Value == "7") || (card.Value == "7"))
+            { return 0; }
+            if (card.Value == "Queen")
+            { return 3; }
+            if (card.Value == "King")
+            { return 4; }
+            if (card.Value == "10")
+            { return 10; }
+            if (card.Value == "Ace")
+            {
+                if (Trump == "No Trump")
+                { return 19; }
+                else
+                { return 11; }
+            }
+            if (card.Value == "9")
+            {
+                if (Trump == card.Colour)
+                { return 14; }
+                else
+                { return 0; }
+            }
+            if (card.Value == "Jack")
+            {
+                if (Trump == card.Colour)
+                { return 20; }
+                else
+                { return 2; }
+            }
+            return 0;
+        }
+
         public async Task<IActionResult> OutcomeOffer(string id, string Offer, int offerHands)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Games).Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
                 .FirstOrDefault(m => m.Id == id);
 
             Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
@@ -618,7 +518,7 @@ namespace Preferance.Controllers
                 game.OutcomeOffer = offerHands;
                 game.Status = "Offer";
                 _context.SaveChanges();
-                Response.Redirect("/../../Games/Play/" + id);
+                Response.Redirect("/../../GamesB/Play/" + id);
             }
 
             if (Offer == "accept")
@@ -631,11 +531,11 @@ namespace Preferance.Controllers
                 {
                     if (game.Type == "Misere")
                     {
-                        Response.Redirect("/../../Matches/CloseIncompleteMisere/?id=" + id + "&activeHands=" + game.OutcomeOffer.ToString());
+                        Response.Redirect("/../../MatchesB/CloseIncompleteMisere/?id=" + id + "&activeHands=" + game.OutcomeOffer.ToString());
                     }
                     else
                     {
-                        Response.Redirect("/../../Matches/CloseIncompletePointGame/?id=" + id + "&activeHands=" + game.OutcomeOffer.ToString());
+                        Response.Redirect("/../../MatchesB/CloseIncompletePointGame/?id=" + id + "&activeHands=" + game.OutcomeOffer.ToString());
                     }
                 }
             }
@@ -645,7 +545,7 @@ namespace Preferance.Controllers
                 game.OutcomeOffer = -2;
                 game.Status = "Playing";
                 _context.SaveChanges();
-                Response.Redirect("/../../Games/Play/" + id);
+                Response.Redirect("/../../GamesB/Play/" + id);
             }
 
             errorView = new ErrorViewModel();
@@ -676,7 +576,7 @@ namespace Preferance.Controllers
                     {
                         return false;
                     }
-                case "10":
+                case "Jack":
                     if ((b == "7") || (b == "8") || (b == "9"))
                     {
                         return true;
@@ -685,17 +585,8 @@ namespace Preferance.Controllers
                     {
                         return false;
                     }
-                case "Jack":
-                    if ((b == "7") || (b == "8") || (b == "9") || (b == "10"))
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
                 case "Queen":
-                    if ((b == "7") || (b == "8") || (b == "9") || (b == "10") || (b == "Jack"))
+                    if ((b == "7") || (b == "8") || (b == "9") || (b == "Jack"))
                     {
                         return true;
                     }
@@ -704,7 +595,92 @@ namespace Preferance.Controllers
                         return false;
                     }
                 case "King":
-                    if ((b == "7") || (b == "8") || (b == "9") || (b == "10") || (b == "Jack") || (b == "Queen"))
+                    if ((b == "7") || (b == "8") || (b == "9") || (b == "Jack") || (b == "Queen"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "10":
+                    if ((b == "7") || (b == "8") || (b == "9") || (b == "Jack") || (b == "Queen") || (b == "King"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                default:
+                    {
+                        return true;
+                    }
+            }
+        }
+
+        public bool TrumpCardValueGreaterThan(string a, string b)
+        {
+            switch (a)
+            {
+                case "7":
+                    return false;
+                case "8":
+                    if (b == "7")
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "Queen":
+                    if ((b == "7") || (b == "8"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "King":
+                    if ((b == "7") || (b == "8") || (b == "Queen"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "10":
+                    if ((b == "7") || (b == "8") || (b == "Queen") || (b == "King"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "Ace":
+                    if ((b == "7") || (b == "8") || (b == "Queen") || (b == "King") || (b == "10"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "9":
+                    if ((b == "7") || (b == "8") || (b == "Queen") || (b == "King") || (b == "10") || (b == "Ace"))
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                case "Jack":
+                    if ((b == "7") || (b == "8") || (b == "Queen") || (b == "King") || (b == "10") || (b == "Ace") || (b == "9"))
                     {
                         return true;
                     }

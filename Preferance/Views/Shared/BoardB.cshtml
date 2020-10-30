@@ -1,0 +1,78 @@
+﻿@model Preferance.Models.MatchB
+
+<div style="width:100%">
+    <table style="border:double;background-color:beige;width:100%">
+        <tr>
+            <td colspan="2">@Model.North.Name / @Model.South.Name</td>
+            <td colspan="2">@Model.East.Name / @Model.West.Name</td>
+        </tr>
+        @for (var i = 0; i < Model.Games.Count; i++)
+        {
+    <tr>
+        <td>
+            @if (@Model.Games[i].ActiveTeamNS)
+            {
+                <label>@Model.Games[i].Value</label>
+            }
+            else
+            {<label>-</label>}
+        </td>
+        <td>@Model.Games[i].NorthSouthPoints</td>
+        <td>
+            @if (!(@Model.Games[i].ActiveTeamNS))
+            {
+                <label>@Model.Games[i].Value</label>
+            }
+            else
+            {<label>-</label>}
+        </td>
+        <td>@Model.Games[i].EastWestPoints</td>
+    </tr>
+        }
+    </table>
+    <table>
+        <tr>
+            <td></td>
+            @if (Model.Games[Model.Games.Count - 1].Dealer.Id == Model.North.Id)
+            {
+                <td style="color:red">@Model.North.Name</td>
+            }
+            else
+            {
+                <td>@Model.North.Name</td>
+            }
+            <td></td>
+        </tr>
+        <tr>
+            @if (Model.Games[Model.Games.Count - 1].Dealer.Id == Model.West.Id)
+            {
+            <td style="color:red">@Model.West.Name</td>
+            }
+            else
+            {
+            <td>@Model.West.Name</td>
+            }
+            <td></td>
+            @if (Model.Games[Model.Games.Count - 1].Dealer.Id == Model.East.Id)
+            {
+            <td style="color:red">@Model.East.Name</td>
+            }
+            else
+            {
+            <td>@Model.East.Name</td>
+            }
+        </tr>
+        <tr>
+            <td></td>
+            @if (Model.Games[Model.Games.Count - 1].Dealer.Id == Model.South.Id)
+            {
+            <td style="color:red">@Model.South.Name</td>
+            }
+            else
+            {
+            <td>@Model.South.Name</td>
+            }
+            <td></td>
+        </tr>
+    </table>
+</div>

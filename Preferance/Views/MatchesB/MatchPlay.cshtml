@@ -1,0 +1,187 @@
+﻿@model Preferance.Models.MatchB
+
+@{
+    ViewData["Title"] = "Match";
+}
+
+<label class="alert-danger">@ViewBag.Message</label>
+<div>
+    <table style="background-color:aquamarine;width:100%;border:thin">
+        <tr style="width:100%;text-align:center;font-weight:400">
+
+            <!-- Player name and Deal button -->
+
+            @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == ViewBag.Player)
+            {
+                @if (Model.Games[Model.Games.Count - 1].North.Id == ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].North.Name</td>
+                }
+                @if (Model.Games[Model.Games.Count - 1].South.Id == ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].South.Name</td>
+                }
+                @if (Model.Games[Model.Games.Count - 1].East.Id == ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].East.Name</td>
+                }
+                @if (Model.Games[Model.Games.Count - 1].West.Id == ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="4">@Model.Games[Model.Games.Count - 1].West.Name</td>
+                }
+            }
+            else
+            {
+                @if (Model.Games[Model.Games.Count - 1].North.Id == ViewBag.Player)
+                {
+                    <td colspan="4">@Model.Games[Model.Games.Count - 1].North.Name</td>
+                }
+                @if (Model.Games[Model.Games.Count - 1].South.Id == ViewBag.Player)
+                {
+                    <td colspan="4">@Model.Games[Model.Games.Count - 1].South.Name</td>
+                }
+                @if (Model.Games[Model.Games.Count - 1].East.Id == ViewBag.Player)
+                {
+                    <td colspan="4">@Model.Games[Model.Games.Count - 1].East.Name</td>
+                }
+                @if (Model.Games[Model.Games.Count - 1].West.Id == ViewBag.Player)
+                {
+                    <td colspan="4">@Model.Games[Model.Games.Count - 1].West.Name</td>
+                }
+            }
+            <td>
+                @if (Model.Games[Model.Games.Count - 1].Status == "Dealing")
+                {
+                    @if (@ViewBag.Dealer == @ViewBag.Player)
+                    {
+                        <input type="button" value="Deal" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../MatchesB/Play?id=", Model.Id, "&deal=true")'" />
+                    }
+                }
+            </td>
+        </tr>
+        @if (!(@Model.Games[Model.Games.Count - 1].NorthHand == null))
+        {
+            <tr>
+                <!-- Own Cards -->
+                <td colspan="4">
+                    <!-- Accept Misere -->
+                    @if (@Model.Games[Model.Games.Count - 1].North.Id == @ViewBag.Player)
+                    {
+                        var handcards = Model.Games[Model.Games.Count - 1].NorthHand.Cards;
+                        @foreach (var card in handcards)
+                        {
+                            <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:11%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                        }
+                    }
+                    @if (@Model.Games[Model.Games.Count - 1].South.Id == @ViewBag.Player)
+                    {
+                        var handcards = Model.Games[Model.Games.Count - 1].SouthHand.Cards;
+                        @foreach (var card in handcards)
+                        {
+                            <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:11%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                        }
+                    }
+                    @if (@Model.Games[Model.Games.Count - 1].East.Id == @ViewBag.Player)
+                    {
+                        var handcards = Model.Games[Model.Games.Count - 1].EastHand.Cards;
+                        @foreach (var card in handcards)
+                        {
+                            <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:11%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                        }
+                    }
+                    @if (@Model.Games[Model.Games.Count - 1].West.Id == @ViewBag.Player)
+                    {
+                        var handcards = Model.Games[Model.Games.Count - 1].WestHand.Cards;
+                        @foreach (var card in handcards)
+                        {
+                            <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:11%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                        }
+                    }
+                </td>
+                <td width="20%">
+                    <input type="button" value="Order" class="btn-block badge-pill badge-info" onclick="showOrder()" />
+                    <input type="button" value="Go to Game" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")'" />
+                </td>
+            </tr>
+        }
+        <tr id="OrderRow" hidden>
+            <td colspan="4">
+                <label>Points: </label><input id="gmValue" value="" />
+                <select id="gmSuit">
+                    <option>Spades</option>
+                    <option>Clubs</option>
+                    <option>Diamonds</option>
+                    <option>Hearts</option>
+                    <option>No Trump</option>
+                </select>
+                <br />
+                <label>Kaput:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="gmKaput" type="checkbox" value="Kaput" /><br />
+                <label>Challenge:&nbsp;</label><input id="gmChallenge" type="checkbox" value="Challenge" /><br />
+                <label>Contra:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label><input id="gmContra" type="checkbox" value="Contra" />
+            </td>
+            <td width="20%">
+                <input type="button" value="Place Order" class="btn-block badge-pill badge-info" onclick="placeOrder()" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Last hand:</label>
+            </td>
+            <!-- Last Hand: -->
+            <td colspan="3">
+                @if (true)
+                {
+                    var handcards = Model.LastHand.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:12%;height:auto" alt="@card.Value of @card.Colour" />
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<div>
+
+    <partial name="\..\Shared\BoardB" model=@Model />
+
+</div>
+<script>
+
+    function placeOrder() {
+        var selValue = document.getElementById("gmValue");
+        if (!(isNumeric(selValue.value))) {
+            alert("Game value must be numeric");
+            return;
+        }
+        var inputValue = Number(selValue.value);
+        if (!(Number.isInteger(inputValue))) {
+            alert("Game value must be an integer");
+            return;
+        }
+        if (document.getElementById("gmKaput").checked & (inputValue < 25)) {
+            alert("Game value cannot be less than 25 if Kaput has been ordered");
+            return;
+        }
+        if (inputValue < 8) {
+            alert("Game value cannot be less than 8");
+            return;
+        }
+        var selSuit = document.getElementById("gmSuit");
+        var refer = "/../MatchesB/Play?id=" + "@Model.Id" + "&bid=order";
+        refer = refer + "&type=" + selSuit.options[selSuit.selectedIndex].text + "&value=" + selValue.value + "&challenge=" + document.getElementById("gmChallenge").checked + "&contra=" + document.getElementById("gmContra").checked + "&kaput=" + document.getElementById("gmKaput").checked;
+        window.location.href = refer;
+        return;
+    }
+
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    function showOrder() {
+        document.getElementById("OrderRow").hidden = false;
+    }
+
+</script>

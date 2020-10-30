@@ -1,0 +1,84 @@
+﻿@model Preferance.Models.Game
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Game</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Value)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Value)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Player1Bidding)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Player1Bidding)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Player2Bidding)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Player2Bidding)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Player3Bidding)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Player3Bidding)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Player4Bidding)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Player4Bidding)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MiserePossible)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MiserePossible)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MisereOffered)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MisereOffered)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MisereSharable)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MisereSharable)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MisereShared)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MisereShared)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

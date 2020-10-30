@@ -7,7 +7,7 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-action="Create">New Match</a>
+    <a asp-action="Create">New Game</a>
 </p>
 <table class="table">
     <thead>
@@ -25,7 +25,7 @@
                 @Html.DisplayNameFor(model => model.Player4.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.MatchDate)
+                Start Time
             </th>
             <th></th>
         </tr>
@@ -51,7 +51,7 @@
             <td>
                 <a asp-action="Play" asp-route-id="@item.Id">Enter</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
             </td>
         </tr>
 }

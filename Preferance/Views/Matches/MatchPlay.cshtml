@@ -711,12 +711,14 @@
         var s = "img" + v + "_" + c;
         if (document.getElementById("discarded1").value == "") {
             document.getElementById(s).style.border = "thick solid gold";
+            document.getElementById(s).style.width = "11%";
             document.getElementById("discarded1").value = s;
             document.getElementById("btnDiscard").hidden = true;
         }
         else {
             if (document.getElementById("discarded1").value == s) {
                 document.getElementById(s).style.border = "0px solid gold";
+                document.getElementById(s).style.width = "9%";
                 document.getElementById("discarded1").value = document.getElementById("discarded2").value;
                 document.getElementById("discarded2").value = "";
                 document.getElementById("btnDiscard").hidden = true;
@@ -724,12 +726,14 @@
             else {
                 if (document.getElementById("discarded2").value == "") {
                     document.getElementById(s).style.border = "thick solid gold";
+                    document.getElementById(s).style.width = "11%";
                     document.getElementById("discarded2").value = s;
                     document.getElementById("btnDiscard").hidden = false;
                 }
                 else {
                     if (document.getElementById("discarded2").value == s) {
                         document.getElementById(s).style.border = "0px solid gold";
+                        document.getElementById(s).style.width = "9%";
                         document.getElementById("discarded2").value = "";
                         document.getElementById("btnDiscard").hidden = true;
                     }

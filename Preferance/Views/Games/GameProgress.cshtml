@@ -306,7 +306,7 @@
         @if ((((@Model.Games[Model.Games.Count - 1].Player1.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].Player1Whisting == 1)) || ((@Model.Games[Model.Games.Count - 1].Player2.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].Player2Whisting == 1)) || ((@Model.Games[Model.Games.Count - 1].Player3.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].Player3Whisting == 1)) || ((@Model.Games[Model.Games.Count - 1].Player4.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].Player4Whisting == 1))) & (@Model.Games[Model.Games.Count - 1].Status == "Offer"))
         {
             <tr>
-                <td colspan="3" style="text-align:right">Quick finish offered: @Model.Games[Model.Games.Count - 1].OutcomeOffer hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
+                <td colspan="3" style="text-align:right">Quick finish offered: <b> @Model.Games[Model.Games.Count - 1].OutcomeOffer </b> hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
                 <td>
                     <button class="btn-block badge-pill badge-info" onclick="processOffer('accept')">Accept</button>
                 </td>
@@ -320,7 +320,7 @@
             @if ((@Model.Games[Model.Games.Count - 1].Player1.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)) & ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id) || (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id) & (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)))
             {
                 <tr>
-                    <td colspan="3" style="text-align:right">Quick finish offered: @Model.Games[Model.Games.Count - 1].OutcomeOffer hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
+                    <td colspan="3" style="text-align:right">Quick finish offered: <b> @Model.Games[Model.Games.Count - 1].OutcomeOffer </b> hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
                     <td>
                         <button class="btn-block badge-pill badge-info" onclick="processOffer('accept')">Accept</button>
                     </td>
@@ -332,7 +332,7 @@
             @if ((@Model.Games[Model.Games.Count - 1].Player2.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)) & ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id) || (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id) & (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)))
             {
                 <tr>
-                    <td colspan="3" style="text-align:right">Quick finish offered: @Model.Games[Model.Games.Count - 1].OutcomeOffer hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
+                    <td colspan="3" style="text-align:right">Quick finish offered: <b> @Model.Games[Model.Games.Count - 1].OutcomeOffer </b> hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
                     <td>
                         <button class="btn-block badge-pill badge-info" onclick="processOffer('accept')">Accept</button>
                     </td>
@@ -344,7 +344,7 @@
             @if ((@Model.Games[Model.Games.Count - 1].Player3.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)) & ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id) || (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id) & (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)))
             {
                 <tr>
-                    <td colspan="3" style="text-align:right">Quick finish offered: @Model.Games[Model.Games.Count - 1].OutcomeOffer hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
+                    <td colspan="3" style="text-align:right">Quick finish offered: <b> @Model.Games[Model.Games.Count - 1].OutcomeOffer </b> hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
                     <td>
                         <button class="btn-block badge-pill badge-info" onclick="processOffer('accept')">Accept</button>
                     </td>
@@ -356,7 +356,7 @@
             @if ((@Model.Games[Model.Games.Count - 1].Player4.Id == @ViewBag.Player) & (!(@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)) & ((@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id) || (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id) & (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)))
             {
                 <tr>
-                    <td colspan="3" style="text-align:right">Quick finish offered: @Model.Games[Model.Games.Count - 1].OutcomeOffer hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
+                    <td colspan="3" style="text-align:right">Quick finish offered: <B> @Model.Games[Model.Games.Count - 1].OutcomeOffer </B> hands for @Model.Games[Model.Games.Count - 1].ActivePlayer.Name. Accept? </td>
                     <td>
                         <button class="btn-block badge-pill badge-info" onclick="processOffer('accept')">Accept</button>
                     </td>
@@ -552,6 +552,7 @@
         var s = "img" + v + "_" + c;
         if (document.getElementById("selectedCard").value == "") {
             document.getElementById(s).style.border = "thick solid gold";
+            document.getElementById(s).style.width = "11%";
             document.getElementById("selectedCard").value = s;
             document.getElementById("btnPlay").hidden = false;
             document.getElementById("btnPlay").disabled = false;
@@ -559,12 +560,15 @@
         else {
             if (document.getElementById("selectedCard").value == s) {
                 document.getElementById(s).style.border = "0px solid gold";
+                document.getElementById(s).style.width = "9%";
                 document.getElementById("selectedCard").value = "";
                 document.getElementById("btnPlay").hidden = true;
             }
             else {
                 document.getElementById(document.getElementById("selectedCard").value).style.border = "0px solid gold";
+                document.getElementById(document.getElementById("selectedCard").value).style.width = "9%";
                 document.getElementById(s).style.border = "thick solid gold";
+                document.getElementById(s).style.width = "11%";
                 document.getElementById("selectedCard").value = s;
                 document.getElementById("btnPlay").hidden = false;
                 document.getElementById("btnPlay").disabled = false;
@@ -689,7 +693,7 @@
     function offer(offer) {
         var e = document.getElementById("txtOffer");
         document.getElementById("rowOffer").hidden = true;
-        document.getElementById("lblOffer").innerText = "Offering to take " + e.options[e.selectedIndex].text + " hands. Confirm?";
+        document.getElementById("lblOffer").innerHTML = "Offering to take <B>" + e.options[e.selectedIndex].text + "</B> hands. Confirm?";
         document.getElementById("rowOfferConfirm").hidden = false;
     }
 

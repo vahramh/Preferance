@@ -17,6 +17,10 @@ namespace Preferance.Data
         public DbSet<Preferance.Models.Game> Game { get; set; }
         public DbSet<Preferance.Models.Hand> Hand { get; set; }
         public DbSet<Preferance.Models.Card> Card { get; set; }
+        public DbSet<Preferance.Models.MatchB> MatchB { get; set; }
+        public DbSet<Preferance.Models.GameB> GameB { get; set; }
+        public DbSet<Preferance.Models.HandB> HandB { get; set; }
+        public DbSet<Preferance.Models.CardB> CardB { get; set; }
 
         public DbSet<Preferance.Models.Player> Player { get; set; }
     }

@@ -1,0 +1,665 @@
+﻿@model Preferance.Models.MatchB
+
+@{
+    ViewData["Title"] = "Match";
+}
+
+<div>
+    <table style="background-color:aquamarine;width:100%;border:thin">
+        <tr style="width:100%;text-align:center;font-weight:400">
+            @if (Model.Games[Model.Games.Count - 1].NextPlayer.Id == ViewBag.Player)
+            {
+                @if (@Model.Games[Model.Games.Count - 1].North.Id == @ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="5">@Model.Games[Model.Games.Count - 1].North.Name</td>
+                }
+                @if (@Model.Games[Model.Games.Count - 1].South.Id == @ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="5">@Model.Games[Model.Games.Count - 1].South.Name</td>
+                }
+                @if (@Model.Games[Model.Games.Count - 1].East.Id == @ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="5">@Model.Games[Model.Games.Count - 1].East.Name</td>
+                }
+                @if (@Model.Games[Model.Games.Count - 1].West.Id == @ViewBag.Player)
+                {
+                    <td style="background-color:red" colspan="5">@Model.Games[Model.Games.Count - 1].West.Name</td>
+                }
+            }
+            else
+            {
+                @if (@Model.Games[Model.Games.Count - 1].North.Id == @ViewBag.Player)
+                {
+                    <td colspan="5">@Model.Games[Model.Games.Count - 1].North.Name</td>
+                }
+                @if (@Model.Games[Model.Games.Count - 1].South.Id == @ViewBag.Player)
+                {
+                    <td colspan="5">@Model.Games[Model.Games.Count - 1].South.Name</td>
+                }
+                @if (@Model.Games[Model.Games.Count - 1].East.Id == @ViewBag.Player)
+                {
+                    <td colspan="5">@Model.Games[Model.Games.Count - 1].East.Name</td>
+                }
+                @if (@Model.Games[Model.Games.Count - 1].West.Id == @ViewBag.Player)
+                {
+                    <td colspan="5">@Model.Games[Model.Games.Count - 1].West.Name</td>
+                }
+            }
+        </tr>
+        <tr style="background-color:aqua">
+            <!-- Titles -->
+            <td width="20%">Game</td>
+            <td width="20%">Dealer</td>
+            <td width="20%">Next</td>
+            <td width="20%">Status</td>
+        </tr>
+        <tr>
+            <td>
+                <b>
+                    <label>&nbsp;@Model.Games[Model.Games.Count - 1].Value &nbsp @Model.Games[Model.Games.Count - 1].Type</label>
+                </b>
+            </td>
+            <td><label>@Model.Games[Model.Games.Count - 1].Dealer.Name</label></td>
+            <td><label><b>@Model.Games[Model.Games.Count - 1].NextPlayer.Name</b></label></td>
+            <td><label>@Model.Games[Model.Games.Count - 1].Status</label></td>
+        </tr>
+        <tr>
+            <td>Points:</td>
+            <td>@Model.Games[Model.Games.Count - 1].North.Name / @Model.Games[Model.Games.Count - 1].South.Name</td>
+            <td>@Model.Games[Model.Games.Count - 1].East.Name / @Model.Games[Model.Games.Count - 1].West.Name</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td>@Model.Games[Model.Games.Count - 1].NorthSouthPoints</td>
+            <td>@Model.Games[Model.Games.Count - 1].EastWestPoints</td>
+        </tr>
+        <tr>
+            <td>
+                <label>Hand:</label>
+            </td>
+            <td colspan="4">
+                @if (@Model.Games[Model.Games.Count - 1].North.Id == @ViewBag.Player)
+                {
+                    var handcards = Model.Games[Model.Games.Count - 1].NorthHand.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:9%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                    }
+                }
+                @if (@Model.Games[Model.Games.Count - 1].South.Id == @ViewBag.Player)
+                {
+                    var handcards = Model.Games[Model.Games.Count - 1].SouthHand.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:9%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                    }
+                }
+                @if (@Model.Games[Model.Games.Count - 1].East.Id == @ViewBag.Player)
+                {
+                    var handcards = Model.Games[Model.Games.Count - 1].EastHand.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:9%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                    }
+                }
+                @if (@Model.Games[Model.Games.Count - 1].West.Id == @ViewBag.Player)
+                {
+                    var handcards = Model.Games[Model.Games.Count - 1].WestHand.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:9%;height:auto" alt="@card.Value of @card.Colour" onclick="cardClick('@card.Value', '@card.Colour')" />
+                    }
+                }
+            </td>
+        </tr>
+        <tr>
+            <!--Row for Play button-->
+            <td style="text-align:left">
+                <button class="btn-block badge-pill badge-info" id="btnPlay" onclick="makePlay()" hidden>Play</button>
+            </td>
+            <td style="text-align:left">
+                <button class="btn-block badge-pill badge-info" id="btnShow" onclick="showCards()" hidden>Show Cards</button>
+            </td>
+        </tr>
+        @if (@Model.Games[Model.Games.Count - 1].OpenCards.Cards.Count() > 0)
+        {
+            var handcards = Model.Games[Model.Games.Count - 1].OpenCards.Cards;
+            if (handcards.Count() > 0)
+            {
+                <tr>
+                    <td>
+                        <label>Open Cards:</label>
+                    </td>
+                    <td colspan="4">
+                        @foreach (var card in handcards)
+                        {
+                            <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:9%;height:auto" alt="@card.Value of @card.Colour" />
+                        }
+                    </td>
+                </tr>
+            }
+        }
+        <tr>
+            <td>
+                <label>Table:</label>
+            </td>
+            <!-- Cards in play -->
+            <td colspan="3">
+                @if (true)
+                {
+                    var handcards = Model.Games[Model.Games.Count - 1].HandInPlay.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:12%;height:auto" alt="@card.Value of @card.Colour" />
+                    }
+                }
+            </td>
+            <td style="text-align:center">
+                @if ((Model.Games[Model.Games.Count - 1].Status == "Collecting") & (Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player))
+                {
+                    <button id="btnCollect" class="btn-block badge-pill badge-info" onclick="collect()">Collect</button>
+                }
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Last hand:</label>
+            </td>
+            <!-- Last Hand: -->
+            <td colspan="3">
+                @if (true)
+                {
+                    var handcards = Model.LastHand.Cards;
+                    @foreach (var card in handcards)
+                    {
+                        <img id="img@(card.Value)_@(card.Colour)" src="~/images/@(card.Value)_@(card.Colour).png" style="width:12%;height:auto" alt="@card.Value of @card.Colour" />
+                    }
+                }
+            </td>
+        </tr>
+    </table>
+    <input id="txtMulti" value="no" hidden />
+    <input id="txtC1" value="" hidden />
+    <input id="txtC2" value="" hidden />
+    <input id="txtC3" value="" hidden />
+    <input id="txtC4" value="" hidden />
+    <input id="txtC5" value="" hidden />
+    <input id="txtC6" value="" hidden />
+    <input id="txtC7" value="" hidden />
+    <input id="txtC8" value="" hidden />
+</div>
+
+<div>
+
+    <partial name="\..\Shared\BoardB" model=@Model />
+
+</div>
+
+<div>
+    <input id="selectedCard" value="" hidden />
+    <input id="previousSelectedCard" value="" hidden />
+
+</div>
+
+<script>
+
+    function AutoRefresh(t) {
+                        setTimeout("location.reload(true);", t);
+                    }
+
+    function makePlay() {
+        document.getElementById("btnPlay").disabled = true;
+        var suit = document.getElementById("selectedCard").value.substring(document.getElementById("selectedCard").value.indexOf("_") + 1, 100);
+        var value = document.getElementById("selectedCard").value.substring(3, document.getElementById("selectedCard").value.indexOf("_"));
+        var handCardsSuit = [];
+        var handCardsValue = [];
+        @foreach (var card in Model.Games[Model.Games.Count - 1].HandInPlay.Cards)
+        {
+            @:handCardsSuit.push("@card.Colour");
+            @:handCardsValue.push("@card.Value");
+        }
+
+        if (handCardsSuit.length == 0) {
+        // First move is always legal
+            moveLegal = true;
+        }
+        else {
+            var firstSuit = handCardsSuit[0];
+            var moveLegal = false;
+            var trumpSuit = "@Model.Games[Model.Games.Count - 1].Type";
+            if ((suit == firstSuit) & (!(suit == trumpSuit))) {
+                moveLegal = true;
+            }
+
+            var myCardsSuit = [];
+            var myCardsValue = [];
+
+            if (!(moveLegal)) {
+                moveLegal = true;
+                if ("@Model.Games[Model.Games.Count - 1].North.Id" == "@Model.Games[Model.Games.Count - 1].NextPlayer.Id") {
+                    @foreach (var card in Model.Games[Model.Games.Count -1].NorthHand.Cards)
+                    {
+                        @:myCardsSuit.push("@card.Colour");
+                        @:myCardsValue.push("@card.Value");
+                    }
+                }
+                if ("@Model.Games[Model.Games.Count - 1].South.Id" == "@Model.Games[Model.Games.Count - 1].NextPlayer.Id") {
+                    @foreach (var card in Model.Games[Model.Games.Count -1].SouthHand.Cards)
+                    {
+                        @:myCardsSuit.push("@card.Colour");
+                        @:myCardsValue.push("@card.Value");
+                    }
+                }
+                if ("@Model.Games[Model.Games.Count - 1].East.Id" == "@Model.Games[Model.Games.Count - 1].NextPlayer.Id") {
+                    @foreach (var card in Model.Games[Model.Games.Count -1].EastHand.Cards)
+                    {
+                        @:myCardsSuit.push("@card.Colour");
+                        @:myCardsValue.push("@card.Value");
+                    }
+                }
+                if ("@Model.Games[Model.Games.Count - 1].West.Id" == "@Model.Games[Model.Games.Count - 1].NextPlayer.Id") {
+                    @foreach (var card in Model.Games[Model.Games.Count -1].WestHand.Cards)
+                    {
+                        @:myCardsSuit.push("@card.Colour");
+                        @:myCardsValue.push("@card.Value");
+                    }
+                }
+
+                if (moveLegal) {
+                    if (firstSuit == trumpSuit) {
+                        var maxValue = "6";
+                        for (i = 0; i < handCardsSuit.length; i++)
+                        {
+                            if (handCardsSuit[i] == trumpSuit) {
+                                if (trumpALessThanB(maxValue, handCardsValue[i])) {
+                                    maxValue = handCardsValue[i];
+                                }
+                            }
+                        }
+
+                        if (suit == trumpSuit) {
+                            if (trumpALessThanB(maxValue, value)) {
+                                moveLegal = true;
+                            }
+                            else {
+                                for (i = 0; i < myCardsSuit.length; i++) {
+                                    if ((trumpALessThanB(maxValue, myCardsValue[i])) & (myCardsSuit[i] == trumpSuit)) {
+                                        moveLegal = false;
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            for (i = 0; i < myCardsSuit.length; i++) {
+                                if (myCardsSuit[i] == trumpSuit) {
+                                    moveLegal = false;
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        if (suit == firstSuit) {
+                            moveLegal = true;
+                        }
+                        else {
+                            var friendHigh = false;
+                            var highSuit = "";
+                            var highValue = "";
+                            if (handCardsSuit.length == 2) {
+                                if ((!(handCardsSuit[1] == trumpSuit)) & ((!(handCardsSuit[1] == handCardsSuit[0])) || suitALessThanB(handCardsValue[1], handCardsValue[0]))) {
+                                    friendHigh = true;
+                                }
+                                else {
+                                    highSuit = handCardsSuit[1];
+                                    highValue = highValue[1];
+                                }
+                            }
+
+                            if (handCardsSuit.length == 3) {
+                                if (((!(handCardsSuit[2] == trumpSuit)) & ((!(handCardsSuit[2] == handCardsSuit[1])) || suitALessThanB(handCardsValue[2], handCardsValue[1]))) & ((!(handCardsSuit[0] == trumpSuit)) & ((!(handCardsSuit[0] == handCardsSuit[1])) || suitALessThanB(handCardsValue[0], handCardsValue[1]))) & ((handCardsSuit[0] == handCardsSuit[1]) || (handCardsSuit[0] == trumpSuit))) {
+                                    friendHigh = true;
+                                }
+                                else {
+                                    if (!((!(handCardsSuit[2] == trumpSuit)) & ((!(handCardsSuit[2] == handCardsSuit[1])) || suitALessThanB(handCardsSuit[2], handCardsSuit[1])))) {
+                                        highSuit = handCardsSuit[2];
+                                        highValue = highValue[2];
+                                        if ((handCardsSuit[0] == trumpSuit) & (!(handCardsSuit[2] == trumpSuit)) || ((handCardsSuit[2] == handCardsSuit[0]) & (handCardsSuit[2] = trumpSuit) & trumpALessThanB(handCardsValue[2], handCardsValue[0])) || ((handCardsSuit[2] == handCardsSuit[0]) & (!(handCardsSuit[2] = trumpSuit)) & suitALessThanB(handCardsValue[2], handCardsValue[0])))
+                                        {
+                                            highSuit = handCardsSuit[2];
+                                            highValue = highValue[2];
+                                        }
+                                    }
+                                    else {
+                                        highSuit = handCardsSuit[0];
+                                        highValue = highValue[0];
+                                    }
+                                }
+                            }
+
+                            // Do I have hand card suit?
+
+                            for (i = 0; i < myCardsSuit.length; i++) {
+                                if (myCardsSuit[i] == handCardsSuit[0]) {
+                                    moveLegal = false;
+                                }
+                            }
+
+                            // I don't have hand card suit
+
+                            if (moveLegal) {
+                                if ((!friendHigh)) {
+
+                                    // My partner's card is not the highest
+
+                                    if (!(highSuit == trumpSuit)) {
+                                        if (!(suit == trumpSuit)) {
+                                            for (i = 0; i < myCardsSuit.length; i++) {
+                                                if (myCardsSuit[i] == trumpSuit) {
+                                                    moveLegal = false;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        for (i = 0; i < myCardsSuit.length; i++) {
+                                            if ((myCardsSuit[i] == trumpSuit) & trumpALessThanB(highValue, myCardsValue)) {
+                                                moveLegal = false;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+        if (moveLegal) {
+            var refer = "/../GamesB/Play?id=" + "@Model.Id";
+            refer = refer + "&move=Move&cardValue=" + document.getElementById("selectedCard").value.substring(3, document.getElementById("selectedCard").value.indexOf("_")) + "&cardSuit=" + document.getElementById("selectedCard").value.substring(document.getElementById("selectedCard").value.indexOf("_") + 1, 100);
+            window.location.href = refer;
+        }
+        else {
+            alert("Illegal Move");
+        }
+        return;
+    }
+
+    function trumpALessThanB(a, b) {
+        if (a == "6") { return true; }
+        if (a == "7") { return true; }
+        if ((a == "8") & (!(b == "7"))) { return true; }
+        if ((a == "Queen") & (!(b == "7")) & (!(b == "8"))) { return true; }
+        if ((a == "King") & (!(b == "7")) & (!(b == "8")) & (!(b == "Queen"))) { return true; }
+        if ((a == "10") & (!(b == "7")) & (!(b == "8")) & (!(b == "Queen")) & (!(b == "King"))) { return true; }
+        if ((a == "Ace") & (!(b == "7")) & (!(b == "8")) & (!(b == "Queen")) & (!(b == "King")) & (!(b == "10"))) { return true; }
+        if ((a == "9") & (!(b == "7")) & (!(b == "8")) & (!(b == "Queen")) & (!(b == "King")) & (!(b == "10")) & (!(b == "Ace"))) { return true; }
+        return false;
+    }
+
+    function suitALessThanB(a, b) {
+        if (a == "6") { return true; }
+        if (a == "7") { return true; }
+        if ((a == "8") & (!(b == "7"))) { return true; }
+        if ((a == "9") & (!(b == "7")) & (!(b == "8"))) { return true; }
+        if ((a == "Jack") & (!(b == "7")) & (!(b == "8")) & (!(b == "9"))) { return true; }
+        if ((a == "Queen") & (!(b == "7")) & (!(b == "8")) & (!(b == "9")) & (!(b == "Jack"))) { return true; }
+        if ((a == "King") & (!(b == "7")) & (!(b == "8")) & (!(b == "9")) & (!(b == "Jack")) & (!(b == "Queen"))) { return true; }
+        if ((a == "10") & (!(b == "7")) & (!(b == "8")) & (!(b == "9")) & (!(b == "Jack")) & (!(b == "Queen")) & (!(b == "King"))) { return true; }
+        return false;
+    }
+
+    function collect() {
+        document.getElementById("btnCollect").disabled = true;
+        var refer = "/../Games/Play?id=" + "@Model.Id";
+        refer = refer + "&move=collect";
+        window.location.href = refer;
+        return;
+    }
+
+    function compareCardNames(a, b) {
+        return (getCardValue(a) - getCardValue(b));
+    }
+
+    function getCardValue(a) {
+        var res = 0;
+        var suit = (a.substring(a.indexOf("_") + 1, 100));
+        var val = a.substring(0, a.indexOf("_"));
+
+        if (val == "7") {
+            res = 10;
+        }
+        if (val == "8") {
+            res = 20;
+        }
+        if (val == "9") {
+            res = 30;
+        }
+        if (val == "10") {
+            res = 40;
+        }
+        if (val == "Jack") {
+            res = 50;
+        }
+        if (val == "Queen") {
+            res = 60;
+        }
+        if (val == "King") {
+            res = 70;
+        }
+        if (val == "Ace") {
+            res = 80;
+        }
+
+        if (suit == "Clubs") {
+            res = res + 1;
+        }
+        if (suit == "Diamonds") {
+            res = res + 2;
+        }
+        if (suit == "Hearts") {
+            res = res + 3;
+        }
+        if (suit == "No Trump") {
+            res = res + 4;
+        }
+
+        return res;
+    }
+
+    function cardClick(v, c) {
+        if (!(("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Playing"))) {
+            return;
+        }
+
+        if ("@Model.Games[Model.Games.Count - 1].Status" == "Collecting") {
+            return;
+        }
+
+        var s = "img" + v + "_" + c;
+        if (document.getElementById("selectedCard").value == "") {
+            document.getElementById(s).style.border = "thick solid gold";
+            document.getElementById(s).style.width = "11%";
+            document.getElementById("selectedCard").value = s;
+            document.getElementById("btnPlay").hidden = false;
+            document.getElementById("btnPlay").disabled = false;
+        }
+        else {
+            if (document.getElementById("selectedCard").value == s) {
+                document.getElementById(s).style.border = "0px solid gold";
+                document.getElementById(s).style.width = "9%";
+                document.getElementById("selectedCard").value = "";
+                document.getElementById("btnPlay").hidden = true;
+            }
+            else {
+                document.getElementById(document.getElementById("selectedCard").value).style.border = "0px solid gold";
+                document.getElementById(document.getElementById("selectedCard").value).style.width = "9%";
+                document.getElementById(s).style.border = "thick solid gold";
+                document.getElementById(s).style.width = "11%";
+                document.getElementById("selectedCard").value = s;
+                document.getElementById("btnPlay").hidden = false;
+                document.getElementById("btnPlay").disabled = false;
+             }
+        }
+    }
+
+    function sortCardArray(inputCards) {
+        var outputCards = inputCards;
+        var x;
+
+        for (i = 0; i < inputCards.Length; i++)
+        {
+            for (j = 1; j < inputCards.Length; j++) {
+                if (compareCards(outputCards[j - 1], outputCards[j])) {
+                    x = outputCards[j - 1];
+                    outputCards[j - 1] = outputCards[j];
+                    outputCards[j] = x;
+                }
+            }
+        }
+        return outputCards;
+    }
+
+    function compareCards(a, b) {
+        if ((a.Colour == "Spades") & (!(b.Colour == "Spades"))) {
+            return -1;
+        }
+        else {
+            if ((a.Colour == "Diamonds") & (!(b.Colour == "Diamonds"))) {
+                if (b.Colour == "Spades") {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            }
+            else {
+                if ((a.Colour == "Clubs") & (!(b.Colour == "Clubs"))) {
+                    if (b.Colour == "Hearts") {
+                        return -1;
+                    }
+                    else {
+                        return 1;
+                    }
+                }
+                else {
+                    if ((a.Colour == "Hearts") & (!(b.Colour == "Hearts"))) {
+                        return 1;
+                    }
+                }
+            }
+        }
+        if (a.Value == "Ace") {
+            return 1;
+        }
+        else {
+            if (a.Value == "King") {
+                if (b.Value == "Ace") {
+                    return -1;
+                }
+                else {
+                    return 1;
+                }
+            }
+            else {
+                if (a.Value == "Queen") {
+                    if ((b.Value == "King") || (b.Value == "Ace")) {
+                        return -1;
+                    }
+                    else {
+                        return 1;
+                    }
+                }
+                else {
+                    if (a.Value == "Jack") {
+                        if ((b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                            return -1;
+                        }
+                        else {
+                            return 1;
+                        }
+                    }
+                    else {
+                        if (a.Value == "10") {
+                            if ((b.Value == "Jack") || (b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                                return -1;
+                            }
+                            else {
+                                return 1;
+                            }
+                        }
+                        else {
+                            if (a.Value == "9") {
+                                if ((b.Value == "10") || (b.Value == "Jack") || (b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                                    return -1;
+                                }
+                                else {
+                                    return 1;
+                                }
+                            }
+                            else {
+                                if (a.Value == "8") {
+                                    if ((b.Value == "9") || (b.Value == "10") || (b.Value == "Jack") || (b.Value == "Queen") || (b.Value == "King") || (b.Value == "Ace")) {
+                                        return -1;
+                                    }
+                                    else {
+                                        return 1;
+                                    }
+                                }
+                                else {
+                                    return -1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function offer(offer) {
+        var e = document.getElementById("txtOffer");
+        document.getElementById("rowOffer").hidden = true;
+        document.getElementById("lblOffer").innerHTML = "Offering to take <B>" + e.options[e.selectedIndex].text + "</B> hands. Confirm?";
+        document.getElementById("rowOfferConfirm").hidden = false;
+    }
+
+    function offerConfirm(confirmed) {
+        if (confirmed) {
+            var refer = "/../Games/OutcomeOffer?id=" + "@Model.Id";
+            var e = document.getElementById("txtOffer");
+            refer = refer + "&offerHands=" + e.options[e.selectedIndex].text + "&Offer=offer";
+            window.location.href = refer;
+        }
+        else {
+            document.getElementById("rowOffer").hidden = false;
+            document.getElementById("lblOffer").innerText = "Offer";
+            document.getElementById("rowOfferConfirm").hidden = true;
+        }
+    }
+
+    function processOffer(offer) {
+        var refer = "/../Games/OutcomeOffer?id=" + "@Model.Id";
+        refer = refer + "&Offer=" + offer;
+        window.location.href = refer;
+    }
+
+    window.onload = function()
+    {
+        var str = window.location.href;
+        if (str.indexOf("&move") > 0) {
+            window.location = str.substring(0, str.indexOf("&move"));
+        }
+        if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Playing")) {
+            return;
+        }
+        if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Collecting")) {
+            return;
+        }
+
+        AutoRefresh(3000);
+    }
+</script>

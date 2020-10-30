@@ -1,0 +1,95 @@
+﻿@model IEnumerable<Preferance.Models.Game>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Type)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Value)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Player1Bidding)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Player2Bidding)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Player3Bidding)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Player4Bidding)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MiserePossible)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MisereOffered)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MisereSharable)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MisereShared)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Value)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player1Bidding)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player2Bidding)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player3Bidding)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Player4Bidding)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MiserePossible)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MisereOffered)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MisereSharable)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MisereShared)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

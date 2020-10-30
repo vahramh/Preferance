@@ -1,0 +1,19 @@
+﻿@model Preferance.Models.MatchB
+
+@{
+    ViewData["Title"] = "Match";
+}
+
+<div>
+    @if (Model.Games.Count == 0)
+    {
+        <label>First game in the match. Who's dealing?</label>
+        <br />
+        @Html.ActionLink(@Model.North.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.North.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+        @Html.ActionLink(@Model.South.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.South.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+        @Html.ActionLink(@Model.East.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.East.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+        @Html.ActionLink(@Model.West.Name, "SetFirstDealerTempData", new { MatchId = Model.Id, FirstDealer = @Model.West.Id }, new { @class = "badge-pill badge-info", @type = "button" })
+    }
+</div>
+<script>
+</script>

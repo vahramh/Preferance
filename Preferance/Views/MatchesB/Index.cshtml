@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Preferance.Models.MatchB>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">New Game</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                North/South
+            </th>
+            <th>
+                East/West
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MatchDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.North.Name) / @Html.DisplayFor(modelItem => item.South.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.East.Name) / @Html.DisplayFor(modelItem => item.West.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MatchDate)
+            </td>
+            <td>
+                <a asp-action="Play" asp-route-id="@item.Id">Enter</a> |
+                <!--                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> -->
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

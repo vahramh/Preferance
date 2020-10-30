@@ -14,18 +14,18 @@ using Preferance.Models;
 
 namespace Preferance.Controllers
 {
-    public class MatchesController : Controller
+    public class MatchesBController : Controller
     {
         ErrorViewModel errorView = null;
 
         private readonly ApplicationDbContext _context;
 
-        public MatchesController(ApplicationDbContext context)
+        public MatchesBController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Matches
+        // GET: MatchesB
         public async Task<IActionResult> Index()
         {
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
@@ -40,7 +40,7 @@ namespace Preferance.Controllers
             }
             else
             {
-                return View(await _context.Match.OrderByDescending(m => m.MatchDate).Include(j => j.Player1).Include(j => j.Player2).Include(j => j.Player3).Include(j => j.Player4).ToListAsync());
+                return View(await _context.MatchB.OrderByDescending(m => m.MatchDate).Include(j => j.North).Include(j => j.South).Include(j => j.East).Include(j => j.West).ToListAsync());
             }
         }
 
@@ -52,7 +52,7 @@ namespace Preferance.Controllers
                 return NotFound();
             }
 
-            var match = await _context.Match
+            var match = await _context.MatchB
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (match == null)
             {
@@ -65,14 +65,14 @@ namespace Preferance.Controllers
         // GET: Matches/Create
         public IActionResult Create()
         {
-            Match CurrentMatch = new Match
+            MatchB CurrentMatch = new MatchB
             {
                 Id = Guid.NewGuid().ToString()
             };
-            CurrentMatch.Player1 = new Player();
-            CurrentMatch.Player2 = new Player();
-            CurrentMatch.Player3 = new Player();
-            CurrentMatch.Player4 = new Player();
+            CurrentMatch.North = new Player();
+            CurrentMatch.South = new Player();
+            CurrentMatch.East = new Player();
+            CurrentMatch.West = new Player();
             CurrentMatch.AllPlayers = _context.Player.OrderBy(p => p.Name).ToListAsync().Result;
             return View(CurrentMatch);
         }
@@ -82,7 +82,7 @@ namespace Preferance.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Player1,Player2,Player3,Player4,MatchDate")] Match match)
+        public async Task<IActionResult> Create([Bind("Id,North,South,East,West,MatchDate")] Match match)
         {
             if (ModelState.IsValid)
             {
@@ -95,70 +95,65 @@ namespace Preferance.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> MatchStart([Bind("Id,Player1,Player2,Player3,Player4")] Match match)
+        public async Task<IActionResult> MatchStart([Bind("Id,North,South,East,West")] MatchB match)
         {
-            match.Player1 = _context.Player.FirstOrDefault(m => m.Id == match.Player1.Id);
-            match.Player2 = _context.Player.FirstOrDefault(m => m.Id == match.Player2.Id);
-            match.Player3 = _context.Player.FirstOrDefault(m => m.Id == match.Player3.Id);
-            match.Player4 = _context.Player.FirstOrDefault(m => m.Id == match.Player4.Id);
+            match.North = _context.Player.FirstOrDefault(m => m.Id == match.North.Id);
+            match.South = _context.Player.FirstOrDefault(m => m.Id == match.South.Id);
+            match.East = _context.Player.FirstOrDefault(m => m.Id == match.East.Id);
+            match.West = _context.Player.FirstOrDefault(m => m.Id == match.West.Id);
             if (ModelState.IsValid)
             {
                 _context.Add(match);
                 _context.SaveChanges();
                 /*                return RedirectToAction(nameof(Index)); */
             }
-            match.Games = new List<Game>();
+            match.Games = new List<GameB>();
+
             return View("FirstDealer", match);
         }
 
         public async Task<IActionResult> SetFirstDealerTempData(string MatchId, string FirstDealer)
         {
-            Match match = new Match();
-            match = _context.Match.Include(p => p.Player1).Include(p => p.Player2).Include(p => p.Player3).Include(p => p.Player4).FirstOrDefault(m => m.Id == MatchId);
-            match.Games = new List<Game>();
-            Game game = new Game();
+            MatchB match = new MatchB();
+            match = _context.MatchB.Include(o => o.Games).Include(p => p.North).Include(p => p.South).Include(p => p.East).Include(p => p.West).FirstOrDefault(m => m.Id == MatchId);
+            match.Games = new List<GameB>();
+            GameB game = new GameB();
             game.Id = 0;
             game.Dealer = _context.Player.FirstOrDefault(p => p.Id == FirstDealer);
-            game.Player1 = match.Player1;
-            game.Player2 = match.Player2;
-            game.Player3 = match.Player3;
-            game.Player4 = match.Player4;
-            game.MisereShared = false;
-            if (game.Dealer.Id == game.Player1.Id)
+            game.North = match.North;
+            game.South = match.South;
+            game.East = match.East;
+            game.West = match.West;
+            if (game.Dealer.Id == game.North.Id)
             {
-                game.NextPlayer = game.Player1;
-                game.Player1Bidding = false;
+                game.NextPlayer = game.East;
             }
             else
             {
-                if (game.Dealer.Id == game.Player2.Id)
+                if (game.Dealer.Id == game.East.Id)
                 {
-                    game.NextPlayer = game.Player2;
-                    game.Player2Bidding = false;
+                    game.NextPlayer = game.South;
                 }
                 else
                 {
-                    if (game.Dealer.Id == game.Player3.Id)
+                    if (game.Dealer.Id == game.South.Id)
                     {
-                        game.NextPlayer = game.Player3;
-                        game.Player3Bidding = false;
+                        game.NextPlayer = game.West;
                     }
                     else
                     {
-                        game.NextPlayer = game.Player4;
-                        game.Player4Bidding = false;
+                        game.NextPlayer = game.North;
                     }
                 }
             }
-            game.ActivePlayer = game.NextPlayer;
             game.Type = "";
             game.Value = 0;
             game.Status = "Dealing";
-            match = _context.Match.FirstOrDefault(m => m.Id == MatchId);
+            match = _context.MatchB.FirstOrDefault(m => m.Id == MatchId);
             match.Games.Add(game);
-            match.LastHand = new Hand();
+            match.LastHand = new HandB();
             match.LastHand.Id = match.Id;
-            match.LastHand.Cards = new List<Card>();
+            match.LastHand.Cards = new List<CardB>();
             _context.SaveChanges();
 
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
@@ -166,12 +161,12 @@ namespace Preferance.Controllers
 
             ViewBag.Dealer = FirstDealer;
             ViewBag.Player = UUID;
-            Response.Redirect("/../../Matches/Play/" + MatchId);
+            Response.Redirect("/../../MatchesB/Play/" + MatchId);
             return View("MatchPlay", match);
         }
 
         // GET: Matches/Play/5
-        public async Task<IActionResult> Play(string id, bool deal = false, string bid = "", string whist = "", string type = "", string value = "0", string discard1suit = "", string discard1value = "", string discard2suit = "", string discard2value = "")
+        public async Task<IActionResult> Play(string id, bool deal = false, string bid = "", string type = "", int value = 0, bool challenge = false, bool contra = false, bool kaput = false)
         {
             System.Security.Claims.ClaimsPrincipal currentUser = this.User;
             string UUID = currentUser.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -184,1295 +179,57 @@ namespace Preferance.Controllers
                 return View("Error", errorView);
             }
 
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(o => o.LastHand)
+            var match = _context.MatchB.Include(o => o.Games).Include(o => o.North).Include(o => o.South).Include(o => o.East).Include(o => o.West).Include(o => o.LastHand)
                 .ThenInclude(o => o.Cards)
               .FirstOrDefault(m => m.Id == id);
 
-            Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
-                .Include(o => o.Player1Hand).Include(o => o.Player2Hand).Include(o => o.Player3Hand).Include(o => o.Player4Hand).Include(o => o.Talon)
+            GameB game = _context.GameB.Where(m => m.MatchBId == match.Id).OrderByDescending(g => g.Id).Take(1)
+                .Include(o => o.NorthHand).Include(o => o.SouthHand).Include(o => o.EastHand).Include(o => o.WestHand)
                 .ToList()[0];
 
             if ((game.Status == "Playing") || (game.Status == "Collecting") || (game.Status == "Offer"))
             {
-                Response.Redirect("/../../Games/Play/" + id);
+                Response.Redirect("/../../GamesB/Play/" + id);
                 errorView = new ErrorViewModel();
                 return View("Error", errorView);
             }
 
-            if (!(whist == ""))
+            if (!(game.NorthHand == null))
             {
-                if (whist == "open")
-                {
-                    game.OpenWhist = true;
-                    game.Status = "Playing";
-                    game = DetermineFirstPlayer(game);
-
-                    _context.SaveChanges();
-                    Response.Redirect("/../../Games/Play/" + id);
-                    errorView = new ErrorViewModel();
-                    return View("Error", errorView);
-                }
-                else
-                {
-                    game.OpenWhist = false;
-                    game.Status = "Playing";
-                    game = DetermineFirstPlayer(game);
-
-                    _context.SaveChanges();
-                    Response.Redirect("/../../Games/Play/" + id);
-                    errorView = new ErrorViewModel();
-                    return View("Error", errorView);
-                }
+                game.NorthHand.Cards = _context.CardB.Where(c => c.HandBId == game.NorthHand.Id).OrderBy(c => c.Seniority).ToList();
+                game.SouthHand.Cards = _context.CardB.Where(c => c.HandBId == game.SouthHand.Id).OrderBy(c => c.Seniority).ToList();
+                game.EastHand.Cards = _context.CardB.Where(c => c.HandBId == game.EastHand.Id).OrderBy(c => c.Seniority).ToList();
+                game.WestHand.Cards = _context.CardB.Where(c => c.HandBId == game.WestHand.Id).OrderBy(c => c.Seniority).ToList();
             }
 
-            if (bid == "order")
-            {
-                match.LastHand.Cards.Clear();
-                if (game.Discarded == null)
-                {
-                    game.Discarded = new Hand();
-                    game.Discarded.Id = Guid.NewGuid().ToString();
-                    game.Discarded.Cards = new List<Card>();
-                }
-                game.Talon.Cards = _context.Card.Where(c => c.HandId == game.Talon.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player1Hand.Cards = _context.Card.Where(c => c.HandId == game.Player1Hand.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player2Hand.Cards = _context.Card.Where(c => c.HandId == game.Player2Hand.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player3Hand.Cards = _context.Card.Where(c => c.HandId == game.Player3Hand.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player4Hand.Cards = _context.Card.Where(c => c.HandId == game.Player4Hand.Id).OrderBy(c => c.Seniority).ToList();
-                if (match.LastHand == null)
-                {
-                    match.LastHand = new Hand();
-                    match.LastHand.Id = match.Id;
-                    match.LastHand.Cards = new List<Card>();
-                }
-                else
-                {
-                    match.LastHand.Cards.Clear();
-                }
-                foreach (var card in game.Talon.Cards)
-                {
-                    var _card = new Card();
-                    _card.Id = Guid.NewGuid().ToString();
-                    _card.Colour = card.Colour;
-                    _card.Value = card.Value;
-                    _card.Sequence = card.Sequence;
-                    _card.Seniority = card.Seniority;
-                    match.LastHand.Cards.Add(_card);
-                }
-
-                if (game.ActivePlayer.Id == game.Player1.Id)
-                {
-                    game.Player1Hand.Cards.Add(game.Talon.Cards[0]);
-                    game.Player1Hand.Cards.Add(game.Talon.Cards[1]);
-                    game.Talon.Cards.Clear();
-                    _context.SaveChanges();
-                    foreach (Card card in game.Player1Hand.Cards)
-                    {
-                        if (((card.Colour == discard1suit) & (card.Value == discard1value))
-                            || ((card.Colour == discard2suit) & (card.Value == discard2value)))
-                        {
-                            game.Discarded.Cards.Add(card);
-                        }
-                    }
-                    foreach (Card card in game.Discarded.Cards)
-                    {
-                        game.Player1Hand.Cards.Remove(card);
-                    }
-                }
-                if (game.ActivePlayer.Id == game.Player2.Id)
-                {
-                    game.Player2Hand.Cards.Add(game.Talon.Cards[0]);
-                    game.Player2Hand.Cards.Add(game.Talon.Cards[1]);
-                    game.Talon.Cards.Clear();
-                    _context.SaveChanges();
-                    foreach (Card card in game.Player2Hand.Cards)
-                    {
-                        if (((card.Colour == discard1suit) & (card.Value == discard1value))
-                            || ((card.Colour == discard2suit) & (card.Value == discard2value)))
-                        {
-                            game.Discarded.Cards.Add(card);
-                        }
-                    }
-                    foreach (Card card in game.Discarded.Cards)
-                    {
-                        game.Player2Hand.Cards.Remove(card);
-                    }
-                }
-                if (game.ActivePlayer.Id == game.Player3.Id)
-                {
-                    game.Player3Hand.Cards.Add(game.Talon.Cards[0]);
-                    game.Player3Hand.Cards.Add(game.Talon.Cards[1]);
-                    game.Talon.Cards.Clear();
-                    _context.SaveChanges();
-                    foreach (Card card in game.Player3Hand.Cards)
-                    {
-                        if (((card.Colour == discard1suit) & (card.Value == discard1value))
-                            || ((card.Colour == discard2suit) & (card.Value == discard2value)))
-                        {
-                            game.Discarded.Cards.Add(card);
-                        }
-                    }
-                    foreach (Card card in game.Discarded.Cards)
-                    {
-                        game.Player3Hand.Cards.Remove(card);
-                    }
-                }
-                if (game.ActivePlayer.Id == game.Player4.Id)
-                {
-                    game.Player4Hand.Cards.Add(game.Talon.Cards[0]);
-                    game.Player4Hand.Cards.Add(game.Talon.Cards[1]);
-                    game.Talon.Cards.Clear();
-                    _context.SaveChanges();
-                    foreach (Card card in game.Player4Hand.Cards)
-                    {
-                        if (((card.Colour == discard1suit) & (card.Value == discard1value))
-                            || ((card.Colour == discard2suit) & (card.Value == discard2value)))
-                        {
-                            game.Discarded.Cards.Add(card);
-                        }
-                    }
-                    foreach (Card card in game.Discarded.Cards)
-                    {
-                        game.Player4Hand.Cards.Remove(card);
-                    }
-                }
-
-                game.Type = type;
-                game.Value = Int32.Parse(value);
-                if ((game.Type == "All-Pass") || (game.Type == "Misere"))
-                {
-                    game.Status = "Playing";
-                    if (game.Type == "Misere")
-                    {
-                        if (game.Dealer.Id == game.Player1.Id)
-                        {
-                            game.NextPlayer = game.Player2;
-                        }
-                        else
-                        {
-                            if (game.Dealer.Id == game.Player2.Id)
-                            {
-                                game.NextPlayer = game.Player3;
-                            }
-                            else
-                            {
-                                if (game.Dealer.Id == game.Player3.Id)
-                                {
-                                    game.NextPlayer = game.Player4;
-                                }
-                                else
-                                {
-                                    if (game.Dealer.Id == game.Player4.Id)
-                                    {
-                                        game.NextPlayer = game.Player1;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    _context.SaveChanges();
-                    Response.Redirect("/../../Games/Play/" + id);
-                    errorView = new ErrorViewModel();
-                    return View("Error", errorView);
-                }
-                else
-                {
-                    game.Status = "Whisting";
-                    if (game.ActivePlayer.Id == game.Player1.Id)
-                    {
-                        if (game.Player2.Id == game.Dealer.Id)
-                        {
-                            game.NextPlayer = game.Player3;
-                        }
-                        else
-                        {
-                            game.NextPlayer = game.Player2;
-                        }
-                    }
-                    if (game.ActivePlayer.Id == game.Player2.Id)
-                    {
-                        if (game.Player3.Id == game.Dealer.Id)
-                        {
-                            game.NextPlayer = game.Player4;
-                        }
-                        else
-                        {
-                            game.NextPlayer = game.Player3;
-                        }
-                    }
-                    if (game.ActivePlayer.Id == game.Player3.Id)
-                    {
-                        if (game.Player4.Id == game.Dealer.Id)
-                        {
-                            game.NextPlayer = game.Player1;
-                        }
-                        else
-                        {
-                            game.NextPlayer = game.Player4;
-                        }
-                    }
-                    if (game.ActivePlayer.Id == game.Player4.Id)
-                    {
-                        if (game.Player1.Id == game.Dealer.Id)
-                        {
-                            game.NextPlayer = game.Player2;
-                        }
-                        else
-                        {
-                            game.NextPlayer = game.Player1;
-                        }
-                    }
-                    _context.SaveChanges();
-                    Response.Redirect("/../../Matches/Play/" + id);
-                    errorView = new ErrorViewModel();
-                    return View("Error", errorView);
-                }
-            }
-
-            if (game.Status == "Whisting")
-            {
-                if (bid == "whist")
-                {
-                    if (UUID == game.Player1.Id)
-                    {
-                        game.Player1Whisting = 1;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player2.Id) & (game.ActivePlayer.Id == game.Player3.Id)) || (game.ActivePlayer.Id == game.Player2.Id))
-                        {
-                            // Player 1 is the second whister
-
-                            if ((game.Dealer.Id == game.Player4.Id))
-
-                            //First whister is Player 3
-
-                            {
-                                if (game.Player3Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            //First whister is Player 4
-                            {
-                                if (game.Player4Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Player 1 is the first whister
-
-                            if (game.Player2.Id == game.Dealer.Id)
-                            {
-                                // Player 3 is the second whister
-
-                                // Has player 3 said "Take"?
-
-                                if (game.Player3Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player3Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player3;
-                                }
-                            }
-                            else
-                            {
-                                // Player 2 is the second whister
-                                if (game.Player2Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player2Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player2;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-                    }
-
-                    if (UUID == game.Player2.Id)
-                    {
-                        game.Player2Whisting = 1;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player3.Id) & (game.ActivePlayer.Id == game.Player4.Id)) || (game.ActivePlayer.Id == game.Player3.Id))
-                        {
-                            // Player 2 is the second whister
-
-                            if ((game.Dealer.Id == game.Player1.Id))
-
-                            //First whister is Player 4
-
-                            {
-                                if (game.Player4Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            //First whister is Player 1
-                            {
-                                if (game.Player1Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Player 2 is the first whister
-
-                            if (game.Player3.Id == game.Dealer.Id)
-                            {
-                                // Player 4 is the second whister
-                                if (game.Player4Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player4Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player4;
-                                }
-                            }
-                            else
-                            {
-                                // Player 3 is the second whister
-                                if (game.Player3Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player3Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player3;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-                    }
-
-                    if (UUID == game.Player3.Id)
-                    {
-                        game.Player3Whisting = 1;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player4.Id) & (game.ActivePlayer.Id == game.Player1.Id)) || (game.ActivePlayer.Id == game.Player4.Id))
-                        {
-                            // Player 3 is the second whister
-
-                            if ((game.Dealer.Id == game.Player2.Id))
-
-                            //First whister is Player 1
-
-                            {
-                                if (game.Player1Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            //First whister is Player 2
-                            {
-                                if (game.Player2Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Player 3 is the first whister
-
-                            if (game.Player4.Id == game.Dealer.Id)
-                            {
-                                // Player 1 is the second whister
-                                if (game.Player1Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player1Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player1;
-                                }
-                            }
-                            else
-                            {
-                                // Player 4 is the second whister
-                                if (game.Player4Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player4Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player4;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-                    }
-
-                    if (UUID == game.Player4.Id)
-                    {
-                        game.Player4Whisting = 1;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player1.Id) & (game.ActivePlayer.Id == game.Player2.Id)) || (game.ActivePlayer.Id == game.Player1.Id))
-                        {
-                            // Player 4 is the second whister
-
-                            if ((game.Dealer.Id == game.Player3.Id))
-
-                            //First whister is Player 2
-
-                            {
-                                if (game.Player2Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            //First whister is Player 3
-                            {
-                                if (game.Player3Whisting == 1)
-                                {
-                                    //Two whists
-
-                                    game.Status = "Playing";
-
-                                    // Set the first player
-
-                                    game = DetermineFirstPlayer(game);
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Games/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            //Player 4 is the first whister
-
-                            if (game.Player1.Id == game.Dealer.Id)
-                            {
-                                // Player 2 is the second whister
-                                if (game.Player2Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player2Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player2;
-                                }
-                            }
-                            else
-                            {
-                                // Player 1 is the second whister
-                                if (game.Player1Whisting == 2)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.Player1Whisting = 0;
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player1;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-                    }
-
-                }
-
-                if (bid == "take")
-                {
-                    // I'm definitely the second whister. Need to revert to the first whister for decision
-                    if (UUID == game.Player1.Id)
-                    {
-                        game.Player1Whisting = 2;
-
-                        if (game.Player4.Id == game.Dealer.Id)
-                        {
-                            // First whister is Player 3
-
-                            game.NextPlayer = game.Player3;
-                        }
-                        else
-                        {
-                            // First whister is Player 4
-
-                            game.NextPlayer = game.Player4;
-                        }
-                    }
-
-                    if (UUID == game.Player2.Id)
-                    {
-                        game.Player2Whisting = 2;
-
-                        if (game.Player1.Id == game.Dealer.Id)
-                        {
-                            // First whister is Player 4
-
-                            game.NextPlayer = game.Player4;
-                        }
-                        else
-                        {
-                            // First whister is Player 1
-
-                            game.NextPlayer = game.Player1;
-                        }
-                    }
-
-                    if (UUID == game.Player3.Id)
-                    {
-                        game.Player3Whisting = 2;
-
-                        if (game.Player2.Id == game.Dealer.Id)
-                        {
-                            // First whister is Player 1
-
-                            game.NextPlayer = game.Player1;
-                        }
-                        else
-                        {
-                            // First whister is Player 2
-
-                            game.NextPlayer = game.Player2;
-                        }
-                    }
-
-                    if (UUID == game.Player4.Id)
-                    {
-                        game.Player4Whisting = 2;
-
-                        if (game.Player3.Id == game.Dealer.Id)
-                        {
-                            // First whister is Player 2
-
-                            game.NextPlayer = game.Player2;
-                        }
-                        else
-                        {
-                            // First whister is Player 3
-
-                            game.NextPlayer = game.Player3;
-                        }
-                    }
-
-                    _context.SaveChanges();
-                    Response.Redirect("/../../Matches/Play/" + id);
-                    errorView = new ErrorViewModel();
-                    return View("Error", errorView);
-
-                }
-
-                if (bid == "pass")
-                {
-                    if (UUID == game.Player1.Id)
-                    {
-                        game.Player1Whisting = 0;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player2.Id) & (game.ActivePlayer.Id == game.Player3.Id)) || (game.ActivePlayer.Id == game.Player2.Id))
-                        {
-                            // Player 1 is the second Whister.
-
-                            // Who's the first whister?
-
-                            if (game.Dealer.Id == game.Player4.Id)
-                            {
-                                // Player 3 is the first whister
-
-                                if (game.Player3Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player3;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            {
-                                // Player 4 is the first whister
-
-                                if (game.Player4Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player4;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Player 1 is the first whister
-
-                            //Who's the second whister?
-
-                            if (game.Dealer.Id == game.Player2.Id)
-                            {
-                                // Player 3 is the second whister
-
-                                // Has Player 3 said "Take"?
-
-                                if (game.Player3Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player3;
-                                }
-                            }
-                            else
-                            {
-                                // Player 2 is the second whister
-
-                                // Has Player 2 said "Take"?
-
-                                if (game.Player2Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player2;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-
-                    }
-
-                    if (UUID == game.Player2.Id)
-                    {
-                        game.Player2Whisting = 0;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player3.Id) & (game.ActivePlayer.Id == game.Player4.Id)) || (game.ActivePlayer.Id == game.Player3.Id))
-                        {
-                            // Player 2 is the second Whister.
-
-                            // Who's the first whister?
-
-                            if (game.Dealer.Id == game.Player1.Id)
-                            {
-                                // Player 4 is the first whister
-
-                                if (game.Player4Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player4;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            {
-                                // Player 1 is the first whister
-
-                                if (game.Player1Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player1;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Player 1 is the first whister, need to go to second whister
-
-                            //Who's the second whister?
-
-                            if (game.Dealer.Id == game.Player3.Id)
-                            {
-                                // Player 4 is the second whister
-
-                                // Has Player 4 said "Take"?
-
-                                if (game.Player4Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player4;
-                                }
-                            }
-                            else
-                            {
-                                // Player 3 is the second whister
-
-                                // Has Player 3 said "Take"?
-
-                                if (game.Player3Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player3;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-
-                    }
-
-                    if (UUID == game.Player3.Id)
-                    {
-                        game.Player3Whisting = 0;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player4.Id) & (game.ActivePlayer.Id == game.Player1.Id)) || (game.ActivePlayer.Id == game.Player4.Id))
-                        {
-                            // Player 2 is the second Whister.
-
-                            // Who's the first whister?
-
-                            if (game.Dealer.Id == game.Player2.Id)
-                            {
-                                // Player 1 is the first whister
-
-                                if (game.Player1Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player1;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            {
-                                // Player 2 is the first whister
-
-                                if (game.Player2Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player2;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Player 2 is the first whister, need to go to second whister
-
-                            //Who's the second whister?
-
-                            if (game.Dealer.Id == game.Player4.Id)
-                            {
-                                // Player 1 is the second whister
-
-                                // Has Player 1 said "Take"?
-
-                                if (game.Player1Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player1;
-                                }
-                            }
-                            else
-                            {
-                                // Player 4 is the second whister
-
-                                // Has Player 4 said "Take"?
-
-                                if (game.Player4Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player4;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-
-                    }
-
-                    if (UUID == game.Player4.Id)
-                    {
-                        game.Player4Whisting = 0;
-
-                        // if I'm the second Whister
-
-                        if (((game.Dealer.Id == game.Player1.Id) & (game.ActivePlayer.Id == game.Player2.Id)) || (game.ActivePlayer.Id == game.Player1.Id))
-                        {
-                            // Player 2 is the second Whister.
-
-                            // Who's the first whister?
-
-                            if (game.Dealer.Id == game.Player3.Id)
-                            {
-                                // Player 2 is the first whister
-
-                                if (game.Player2Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player2;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                            else
-                            {
-                                // Player 3 is the first whister
-
-                                if (game.Player3Whisting == 1)
-                                {
-                                    // Only one whist
-
-                                    game.Status = "Opening";
-                                    game.NextPlayer = game.Player3;
-
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/Play/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    // This can only happen if the game is 8 or more. Two passes. Finish the game, start a new one
-
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // Player 4 is the first whister, need to go to second whister
-
-                            //Who's the second whister?
-
-                            if (game.Dealer.Id == game.Player1.Id)
-                            {
-                                // Player 2 is the second whister
-
-                                // Has Player 2 said "Take"?
-
-                                if (game.Player2Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player2;
-                                }
-                            }
-                            else
-                            {
-                                // Player 1 is the second whister
-
-                                // Has Player 3 said "Take"?
-
-                                if (game.Player1Whisting == 2)
-                                {
-                                    _context.SaveChanges();
-                                    Response.Redirect("/../../Matches/CompleteGame/" + id);
-                                    errorView = new ErrorViewModel();
-                                    return View("Error", errorView);
-                                }
-                                else
-                                {
-                                    game.NextPlayer = game.Player1;
-                                }
-                            }
-                            _context.SaveChanges();
-                            Response.Redirect("/../../Matches/Play/" + id);
-                            errorView = new ErrorViewModel();
-                            return View("Error", errorView);
-                        }
-
-                    }
-                }
-            }
-
-
-            if (!(game.Talon == null))
-            {
-                game.Talon.Cards = _context.Card.Where(c => c.HandId == game.Talon.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player1Hand.Cards = _context.Card.Where(c => c.HandId == game.Player1Hand.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player2Hand.Cards = _context.Card.Where(c => c.HandId == game.Player2Hand.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player3Hand.Cards = _context.Card.Where(c => c.HandId == game.Player3Hand.Id).OrderBy(c => c.Seniority).ToList();
-                game.Player4Hand.Cards = _context.Card.Where(c => c.HandId == game.Player4Hand.Id).OrderBy(c => c.Seniority).ToList();
-            }
-            /*            HttpContext.Response.Headers.Add("refresh", "2"); 
-            Game game = match.Games.OrderByDescending(m => m.Id).FirstOrDefault();
-            */
             /* ********************************** Dealing ************************************* */
 
             if (deal)
             {
                 if (game.Status == "Dealing")
                 {
-                    game = Deal(game);
+                    game = DealB(game);
                     game.Status = "Bidding";
                     game.Type = "All-Pass";
-                    game.ActivePlayer = game.Dealer;
-                    if (game.Dealer.Id == game.Player1.Id)
+                    if (game.Dealer.Id == game.North.Id)
                     {
-                        game.NextPlayer = game.Player2;
+                        game.NextPlayer = game.East;
                     }
-                    if (game.Dealer.Id == game.Player2.Id)
+                    if (game.Dealer.Id == game.East.Id)
                     {
-                        game.NextPlayer = game.Player3;
+                        game.NextPlayer = game.South;
                     }
-                    if (game.Dealer.Id == game.Player3.Id)
+                    if (game.Dealer.Id == game.South.Id)
                     {
-                        game.NextPlayer = game.Player4;
+                        game.NextPlayer = game.West;
                     }
-                    if (game.Dealer.Id == game.Player4.Id)
+                    if (game.Dealer.Id == game.West.Id)
                     {
-                        game.NextPlayer = game.Player1;
+                        game.NextPlayer = game.North;
                     }
                     deal = false;
                     _context.SaveChanges();
-                    Response.Redirect("/../../Matches/Play/" + id);
+                    Response.Redirect("/../../MatchesB/Play/" + id);
                     errorView = new ErrorViewModel();
                     return View("Error", errorView);
                 }
@@ -1482,13 +239,32 @@ namespace Preferance.Controllers
 
             if ((game.Status == "Bidding") & ((UUID == game.NextPlayer.Id) || ((UUID == game.Dealer.Id) & ((bid == "reject") || (bid == "accept")))))
             {
-                game = Bid(game, UUID, bid);
                 _context.SaveChanges();
             }
 
-            if (match.Games[match.Games.Count - 1].ActivePlayer == null)
+            if (bid == "order")
             {
-                match.Games[match.Games.Count - 1].ActivePlayer = match.Games[match.Games.Count - 1].Dealer;
+                if (!(game.Status == "Bidding"))
+                {
+                    ViewBag.Message = "Order has already been placed, go to game.";
+                }
+                else
+                {
+                    if (UUID == game.North.Id || UUID == game.South.Id)
+                    { game.ActiveTeamNS = true; }
+                    else
+                    { game.ActiveTeamNS = false; }
+                    game.Challenge = challenge;
+                    game.Contra = contra;
+                    game.Kaput = kaput;
+                    game.EastWestPoints = 0;
+                    game.NorthSouthPoints = 0;
+                    game.Status = "Playing";
+                    game.Type = type;
+                    game.Value = value;
+                    _context.SaveChanges();
+                    Response.Redirect("/../../GamesB/Play/" + id);
+                }
             }
             ViewBag.Dealer = match.Games.OrderByDescending(i => i.Id).FirstOrDefault().Dealer.Id;
             ViewBag.Player = UUID;
@@ -1677,131 +453,55 @@ namespace Preferance.Controllers
 
         public async Task<IActionResult> CompleteGame(string id)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.MatchB.Include(o => o.Games).Include(o => o.North).Include(o => o.South).Include(o => o.East).Include(o => o.West).Include(m => m.Games)
               .FirstOrDefault(m => m.Id == id);
 
-            Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
-                .Include(o => o.Player1Hand).Include(o => o.Player2Hand).Include(o => o.Player3Hand).Include(o => o.Player4Hand)
+            GameB game = _context.GameB.Where(m => m.MatchBId == match.Id).OrderByDescending(g => g.Id).Take(1)
+                .Include(o => o.NorthHand).Include(o => o.SouthHand).Include(o => o.EastHand).Include(o => o.WestHand)
                 .Include(o => o.HandInPlay)
-                .Include(o => o.Player1HandResult).ThenInclude(p => p.hands)
-                .Include(o => o.Player2HandResult).ThenInclude(p => p.hands)
-                .Include(o => o.Player3HandResult).ThenInclude(p => p.hands)
-                .Include(o => o.Player4HandResult).ThenInclude(p => p.hands)
-                .Include(o => o.Talon)
+                .Include(o => o.NorthSouthHandResult)
+                .Include(o => o.EastWestHandResult)
                 .ToList()[0];
-
-            switch (game.Type)
-            {
-                case "All-Pass":
-                    {
-                        game = CompleteAllPass(game);
-                        break;
-                    }
-                case "Misere":
-                    {
-                        game = CompleteMisere(game);
-                        break;
-                    }
-                default:
-
-                    {
-                        game = CompletePointGame(game);
-                        break;
-                    }
-            }
 
             game.Status = "Completed";
 
-            float p1TempDump = 0;
-            float p2TempDump = 0;
-            float p3TempDump = 0;
-            float p4TempDump = 0;
-
-            p1TempDump = match.Player1CurrentDump - match.Player1CurrentPool;
-            p2TempDump = match.Player2CurrentDump - match.Player2CurrentPool;
-            p3TempDump = match.Player3CurrentDump - match.Player3CurrentPool;
-            p4TempDump = match.Player4CurrentDump - match.Player4CurrentPool;
-
-            match.Player1CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p1TempDump) * 10
-                + match.Player12CurrentWhist + match.Player13CurrentWhist + match.Player14CurrentWhist
-                - match.Player21CurrentWhist - match.Player31CurrentWhist - match.Player41CurrentWhist;
-
-            match.Player2CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p2TempDump) * 10
-                + match.Player21CurrentWhist + match.Player23CurrentWhist + match.Player24CurrentWhist
-                - match.Player12CurrentWhist - match.Player32CurrentWhist - match.Player42CurrentWhist;
-
-            match.Player3CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p3TempDump) * 10
-                + match.Player31CurrentWhist + match.Player32CurrentWhist + match.Player34CurrentWhist
-                - match.Player13CurrentWhist - match.Player23CurrentWhist - match.Player43CurrentWhist;
-
-            match.Player4CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p4TempDump) * 10
-                + match.Player41CurrentWhist + match.Player42CurrentWhist + match.Player43CurrentWhist
-                - match.Player14CurrentWhist - match.Player24CurrentWhist - match.Player34CurrentWhist;
-
-            Game newGame = new Game();
+            GameB newGame = new GameB();
             match.Games.Add(newGame);
             _context.SaveChanges();
 
-            if (game.Dealer.Id == game.Player1.Id)
+            if (game.Dealer.Id == game.North.Id)
             {
-                newGame.Dealer = game.Player2;
+                newGame.Dealer = game.East;
             }
             else
             {
-                if (game.Dealer.Id == game.Player2.Id)
+                if (game.Dealer.Id == game.East.Id)
                 {
-                    newGame.Dealer = game.Player3;
+                    newGame.Dealer = game.South;
                 }
                 else
                 {
-                    if (game.Dealer.Id == game.Player3.Id)
+                    if (game.Dealer.Id == game.South.Id)
                     {
-                        newGame.Dealer = game.Player4;
+                        newGame.Dealer = game.West;
                     }
                     else
                     {
-                        newGame.Dealer = game.Player1;
+                        newGame.Dealer = game.North;
                     }
                 }
             }
-            newGame.Player1 = match.Player1;
-            newGame.Player2 = match.Player2;
-            newGame.Player3 = match.Player3;
-            newGame.Player4 = match.Player4;
-            newGame.MisereShared = false;
-            if (newGame.Dealer.Id == newGame.Player1.Id)
-            {
-                newGame.NextPlayer = newGame.Player1;
-                newGame.Player1Bidding = false;
-            }
-            else
-            {
-                if (newGame.Dealer.Id == newGame.Player2.Id)
-                {
-                    newGame.NextPlayer = newGame.Player2;
-                    newGame.Player2Bidding = false;
-                }
-                else
-                {
-                    if (newGame.Dealer.Id == newGame.Player3.Id)
-                    {
-                        newGame.NextPlayer = newGame.Player3;
-                        newGame.Player3Bidding = false;
-                    }
-                    else
-                    {
-                        newGame.NextPlayer = newGame.Player4;
-                        newGame.Player4Bidding = false;
-                    }
-                }
-            }
-            newGame.ActivePlayer = newGame.NextPlayer;
+            newGame.North = match.North;
+            newGame.South = match.South;
+            newGame.East = match.East;
+            newGame.West = match.West;
             newGame.Type = "";
             newGame.Value = 0;
             newGame.Status = "Dealing";
+            match = _context.MatchB.FirstOrDefault(m => m.Id == id);
             _context.SaveChanges();
 //            Response.Redirect("/../../Matches/Play/" + id);
-            Response.Redirect("/../../Matches/Play?id=" + id + "&deal=true");
+            Response.Redirect("/../../MatchesB/Play?id=" + id + "&deal=true");
             errorView = new ErrorViewModel();
             return View("Error", errorView);
 
@@ -1809,7 +509,7 @@ namespace Preferance.Controllers
 
         public async Task<IActionResult> CloseIncompletePointGame(string id, int activeHands)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Games).Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
               .FirstOrDefault(m => m.Id == id);
 
             Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
@@ -2494,7 +1194,7 @@ namespace Preferance.Controllers
 
         public async Task<IActionResult> CloseIncompleteMisere(string id, int activeHands)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Games).Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
               .FirstOrDefault(m => m.Id == id);
 
             Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
@@ -2774,7 +1474,7 @@ namespace Preferance.Controllers
 
         public Game CompleteMisere(Game game)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Games).Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
               .FirstOrDefault(m => m.Id == game.MatchId);
 
             int handResult = 0;
@@ -2989,7 +1689,7 @@ namespace Preferance.Controllers
 
         public Game CompleteAllPass(Game game)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Games).Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
               .FirstOrDefault(m => m.Id == game.MatchId);
 
             if (!(game.Player1HandResult == null))
@@ -3058,7 +1758,7 @@ namespace Preferance.Controllers
             int w2 = 0;
             int wd = 0;
 
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Games).Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
               .FirstOrDefault(m => m.Id == game.MatchId);
 
             if (game.ActivePlayer.Id == game.Player1.Id)
@@ -4473,6 +3173,123 @@ namespace Preferance.Controllers
             return _game;
         }
 
+        public GameB DealB(GameB game)
+        {
+            IList<CardB> deck = new List<CardB>();
+            CardB x;
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    x = new CardB();
+                    x.Id = Guid.NewGuid().ToString();
+                    switch (i)
+                    {
+                        case 0:
+                            x.Colour = "Spades";
+                            x.Seniority = 100;
+                            break;
+                        case 1:
+                            x.Colour = "Clubs";
+                            x.Seniority = 300;
+                            break;
+                        case 2:
+                            x.Colour = "Diamonds";
+                            x.Seniority = 200;
+                            break;
+                        case 3:
+                            x.Colour = "Hearts";
+                            x.Seniority = 400;
+                            break;
+                    }
+                    switch (j)
+                    {
+                        case 0:
+                            x.Value = "Ace";
+                            x.Seniority = x.Seniority + 14;
+                            break;
+                        case 1:
+                            x.Value = "Jack";
+                            x.Seniority = x.Seniority + 11;
+                            break;
+                        case 2:
+                            x.Value = "Queen";
+                            x.Seniority = x.Seniority + 12;
+                            break;
+                        case 3:
+                            x.Value = "King";
+                            x.Seniority = x.Seniority + 13;
+                            break;
+                        default:
+                            x.Value = (j + 3).ToString();
+                            x.Seniority = x.Seniority + j;
+                            break;
+                    }
+                    x.SeniorityTrump = x.Seniority;
+                    if (x.Value == "9")
+                    {
+                        x.SeniorityTrump = x.SeniorityTrump + 10;
+                    }
+                    if (x.Value == "Jack")
+                    {
+                        x.SeniorityTrump = x.SeniorityTrump + 20;
+                    }
+                    deck.Add(x);
+                }
+            }
+
+            deck = deck.OrderBy(a => Guid.NewGuid()).ToList();
+
+            GameB _game = game;
+            int n = 0;
+            int q = 8;
+
+            _game.NorthHand = new HandB();
+            _game.NorthHand.Id = Guid.NewGuid().ToString();
+            _game.NorthHand.Cards = new List<CardB>();
+            for (int j = 0; j < q; j++)
+            {
+                _game.NorthHand.Cards.Add(deck[n]);
+                n++;
+            }
+
+            _game.SouthHand = new HandB();
+            _game.SouthHand.Id = Guid.NewGuid().ToString();
+            _game.SouthHand.Cards = new List<CardB>();
+            for (int j = 0; j < q; j++)
+            {
+                _game.SouthHand.Cards.Add(deck[n]);
+                n++;
+            }
+
+            _game.NorthSouthHandResult = new HandB();
+            _game.NorthSouthHandResult.Id = Guid.NewGuid().ToString();
+
+            _game.EastHand = new HandB();
+            _game.EastHand.Id = Guid.NewGuid().ToString();
+            _game.EastHand.Cards = new List<CardB>();
+            for (int j = 0; j < q; j++)
+            {
+                _game.EastHand.Cards.Add(deck[n]);
+                n++;
+            }
+
+            _game.WestHand = new HandB();
+            _game.WestHand.Id = Guid.NewGuid().ToString();
+            _game.WestHand.Cards = new List<CardB>();
+            for (int j = 0; j < q; j++)
+            {
+                _game.WestHand.Cards.Add(deck[n]);
+                n++;
+            }
+
+            _game.EastWestHandResult = new HandB();
+            _game.EastWestHandResult.Id = Guid.NewGuid().ToString();
+
+            return _game;
+        }
+
         // GET: Matches/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
@@ -4481,7 +3298,7 @@ namespace Preferance.Controllers
                 return NotFound();
             }
 
-            var match = _context.Match.Include(p => p.Player1).Include(p => p.Player2).Include(p => p.Player3).Include(p => p.Player4).FirstOrDefault(m => m.Id == id);
+            var match = _context.Match.Include(o => o.Games).Include(p => p.Player1).Include(p => p.Player2).Include(p => p.Player3).Include(p => p.Player4).FirstOrDefault(m => m.Id == id);
             if (match == null)
             {
                 return NotFound();
