@@ -1,81 +1,4 @@
 ﻿@model Preferance.Models.Match
-<!--
-<div id="Board" class="boardcontainer">
-    <img src="~/images/board.jpg" style="width:100%;height:auto" />
-    <div class="player1">
-        <input id="Player1Name" value="@Model.Player1.Name" class="bg-transparent border-0 text-center" readonly />
-    </div>
-    <div class="player2">
-        <input id="Player2Name" value="@Model.Player2.Name" class="bg-transparent border-0 text-center" readonly />
-    </div>
-    <div class="player3">
-        <input id="Player3Name" value="@Model.Player3.Name" class="bg-transparent border-0 text-center" readonly />
-    </div>
-    <div class="player4">
-        <input id="Player4Name" value="@Model.Player4.Name" class="bg-transparent border-0 text-center" readonly />
-    </div>
-    <div class="player1pool">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" readonly>@Model.Player1Pool</textarea>
-    </div>
-    <div class="player2pool">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="4" rows="20" readonly>@Model.Player2Pool</textarea>
-    </div>
-    <div class="player3pool">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" readonly>@Model.Player3Pool</textarea>
-    </div>
-    <div class="player4pool">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="4" rows="20" readonly>@Model.Player4Pool</textarea>
-    </div>
-    <div class="player1dump">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player1Dump</textarea>
-    </div>
-    <div class="player2dump">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player2Dump</textarea>
-    </div>
-    <div class="player3dump">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player3Dump</textarea>
-    </div>
-    <div class="player4dump">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player4Dump</textarea>
-    </div>
-    <div class="player12whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player12Whist</textarea>
-    </div>
-    <div class="player13whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player13Whist</textarea>
-    </div>
-    <div class="player14whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player14Whist</textarea>
-    </div>
-    <div class="player21whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player21Whist</textarea>
-    </div>
-    <div class="player24whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player24Whist</textarea>
-    </div>
-    <div class="player23whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player23Whist</textarea>
-    </div>
-    <div class="player32whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player32Whist</textarea>
-    </div>
-    <div class="player31whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player31Whist</textarea>
-    </div>
-    <div class="player34whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="20" rows="5" readonly>@Model.Player34Whist</textarea>
-    </div>
-    <div class="player41whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player41Whist</textarea>
-    </div>
-    <div class="player42whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player42Whist</textarea>
-    </div>
-    <div class="player43whist">
-        <textarea class="bg-transparent border-0" style="overflow:hidden" cols="8" rows="20" readonly>@Model.Player43Whist</textarea>
-    </div>
-</div>
-    -->
 <div style="width:100%">
     <table style="border:double;background-color:beige;width:100%">
         <tr>
@@ -199,106 +122,134 @@
                                                     <table style="width:100%; height:100%; border:solid">
                                                         <tr style="height:33%">
                                                             <td style="width:33%"></td>
-                                                            @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)
+                                                            @if (!(Model.Games == null))
                                                             {
-                                                                <td style="width:34%; color:red">
-                                                                    <b>@Model.Player1.Name</b>
-                                                                </td>
-                                                            }
-                                                            else
-                                                            {
-                                                                @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)
+                                                                @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)
                                                                 {
-                                                                    <td style="width:34%">
+                                                                    <td style="width:34%; color:red">
                                                                         <b>@Model.Player1.Name</b>
                                                                     </td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)
+                                                                    @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)
                                                                     {
-                                                                        <td style="width:34%;color:grey">
-                                                                            <b>@Model.Player1.Name (D)</b>
+                                                                        <td style="width:34%">
+                                                                            <b>@Model.Player1.Name</b>
                                                                         </td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td style="width:34%">@Model.Player1.Name</td>
+                                                                        @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player1.Id)
+                                                                        {
+                                                                            <td style="width:34%;color:grey">
+                                                                                <b>@Model.Player1.Name (D)</b>
+                                                                            </td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td style="width:34%">@Model.Player1.Name</td>
+                                                                        }
                                                                     }
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="width:34%">@Model.Player1.Name</td>
                                                             }
                                                             <td style="width:33%"></td>
                                                         </tr>
                                                         <tr style="height:34%">
-                                                            @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)
+                                                            @if (!(Model.Games == null))
                                                             {
-                                                                <td style="width:33%; color:red"><b>@Model.Player4.Name</b></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)
+                                                                @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)
                                                                 {
-                                                                    <td style="width:34%"><b>@Model.Player4.Name</b></td>
+                                                                    <td style="width:33%; color:red"><b>@Model.Player4.Name</b></td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)
+                                                                    @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)
                                                                     {
-                                                                        <td style="width:34%; color:grey"><b>@Model.Player4.Name (D)</b></td>
+                                                                        <td style="width:34%"><b>@Model.Player4.Name</b></td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td style="width:33%">@Model.Player4.Name</td>
+                                                                        @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player4.Id)
+                                                                        {
+                                                                            <td style="width:34%; color:grey"><b>@Model.Player4.Name (D)</b></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td style="width:33%">@Model.Player4.Name</td>
+                                                                        }
                                                                     }
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="width:33%">@Model.Player4.Name</td>
                                                             }
                                                             <td style="width:34%"></td>
-                                                            @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)
+                                                            @if (!(Model.Games == null))
                                                             {
-                                                                <td style="width:33%; color:red"><b>@Model.Player2.Name</b></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)
+                                                                @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)
                                                                 {
-                                                                    <td style="width:34%"><b>@Model.Player2.Name</b></td>
+                                                                    <td style="width:33%; color:red"><b>@Model.Player2.Name</b></td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)
+                                                                    @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)
                                                                     {
-                                                                        <td style="width:34%; color:grey"><b>@Model.Player2.Name (D)</b></td>
+                                                                        <td style="width:34%"><b>@Model.Player2.Name</b></td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td style="width:33%">@Model.Player2.Name</td>
+                                                                        @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player2.Id)
+                                                                        {
+                                                                            <td style="width:34%; color:grey"><b>@Model.Player2.Name (D)</b></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td style="width:33%">@Model.Player2.Name</td>
+                                                                        }
                                                                     }
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="width:33%">@Model.Player2.Name</td>
                                                             }
                                                         </tr>
                                                         <tr style="height:33%">
                                                             <td style="width:33%"></td>
-                                                            @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)
+                                                            @if (!(Model.Games == null))
                                                             {
-                                                                <td style="width:34%; color:red"><b>@Model.Player3.Name</b></td>
-                                                            }
-                                                            else
-                                                            {
-                                                                @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)
+                                                                @if (@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)
                                                                 {
-                                                                    <td style="width:34%"><b>@Model.Player3.Name</b></td>
+                                                                    <td style="width:34%; color:red"><b>@Model.Player3.Name</b></td>
                                                                 }
                                                                 else
                                                                 {
-                                                                    @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)
+                                                                    @if (@Model.Games[Model.Games.Count - 1].ActivePlayer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)
                                                                     {
-                                                                        <td style="width:34%;color:grey"><b>@Model.Player3.Name (D)</b></td>
+                                                                        <td style="width:34%"><b>@Model.Player3.Name</b></td>
                                                                     }
                                                                     else
                                                                     {
-                                                                        <td style="width:34%">@Model.Player3.Name</td>
+                                                                        @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == @Model.Games[Model.Games.Count - 1].Player3.Id)
+                                                                        {
+                                                                            <td style="width:34%;color:grey"><b>@Model.Player3.Name (D)</b></td>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <td style="width:34%">@Model.Player3.Name</td>
+                                                                        }
                                                                     }
                                                                 }
+                                                            }
+                                                            else
+                                                            {
+                                                                <td style="width:34%">@Model.Player3.Name</td>
                                                             }
                                                             <td style="width:33%"></td>
                                                         </tr>

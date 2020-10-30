@@ -6,14 +6,132 @@
 
 <h1>Edit</h1>
 
-<h4>Match</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="row" style="width:100%">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
+                <table style="border:double;background-color:aquamarine;width:100%">
+                    <tr style="height:20%">
+                        <td>
+                            <table style="width:100%; height:100%">
+                                <tr>
+                                    <td style="width:20%; border-right:solid"></td>
+                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input asp-for="Player14CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input asp-for="Player13CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input asp-for="Player12CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="height:60%">
+                        <td style="width:100%">
+                            <table style="height:100%; width:100%">
+                                <tr style="height:100%">
+                                    <td style="width:20%">
+                                        <table style="height:100%; width:100%">
+                                            <tr style="height:33%">
+                                                <td style="width:100%; border-top:solid; border-bottom:solid;border-right:solid"><input asp-for="Player41CurrentWhist" class="form-control" /></td>
+                                            </tr>
+                                            <tr style="height:33%">
+                                                <td style="width:100%; border-bottom:solid;border-right:solid"><input asp-for="Player42CurrentWhist" class="form-control" /></td>
+                                            </tr>
+                                            <tr style="height:33%">
+                                                <td style="width:100%; border-bottom:solid;border-right:solid"><input asp-for="Player43CurrentWhist" class="form-control" /></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="width:60%">
+                                        <table style="height:100%; width:100%; border:solid">
+                                            <tr style="height:5%">
+                                                <td style="width:5%"></td>
+                                                <td style="width:90%"><input asp-for="Player1CurrentPool" class="form-control" /></td>
+                                                <td style="width:5%"></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="width:5%"><input asp-for="Player4CurrentPool" class="form-control" /></td>
+                                                <td style="width:90%">
+                                                    <table style="width:100%; height:100%; border:solid">
+                                                        <tr style="height:33%">
+                                                            <td style="width:33%"></td>
+                                                            <td style="width:34%"><input asp-for="Player1CurrentDump" class="form-control" /></td>
+                                                            <td style="width:33%"></td>
+                                                        </tr>
+                                                        <tr style="height:34%">
+                                                            <td style="width:33%"><input asp-for="Player4CurrentDump" class="form-control" /></td>
+                                                            <td style="width:34%">
+                                                                <table style="width:100%; height:100%; border:solid">
+                                                                    <tr style="height:33%">
+                                                                        <td style="width:33%"></td>
+                                                                        <td style="width:34%">@Model.Player1.Name</td>
+                                                                        <td style="width:33%"></td>
+                                                                    </tr>
+                                                                    <tr style="height:34%">
+                                                                        <td style="width:33%">@Model.Player4.Name</td>
+                                                                        <td style="width:34%"></td>
+                                                                        <td style="width:33%">@Model.Player2.Name</td>
+                                                                    </tr>
+                                                                    <tr style="height:33%">
+                                                                        <td style="width:33%"></td>
+                                                                        <td style="width:34%">@Model.Player3.Name</td>
+                                                                        <td style="width:33%"></td>
+                                                                    </tr>
+                                                                </table>
+                                                            </td>
+                                                            <td style="width:33%"><input asp-for="Player2CurrentDump" class="form-control" /></td>
+                                                        </tr>
+                                                        <tr style="height:33%">
+                                                            <td style="width:33%"></td>
+                                                            <td style="width:34%"><input asp-for="Player3CurrentDump" class="form-control" /></td>
+                                                            <td style="width:33%"></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                                <td style="width:5%"><input asp-for="Player2CurrentPool" class="form-control" /></td>
+                                            </tr>
+                                            <tr style="height:5%">
+                                                <td style="width:5%"></td>
+                                                <td style="width:90%"><input asp-for="Player3CurrentPool" class="form-control" /></td>
+                                                <td style="width:5%"></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td style="width:20%">
+                                        <table style="width:100%; height:100%">
+                                            <tr style="height:33%">
+                                                <td style="width:100%; border-top:solid;border-bottom:solid;border-left:solid"><input asp-for="Player21CurrentWhist" class="form-control" /></td>
+                                            </tr>
+                                            <tr style="height:33%">
+                                                <td style="width:100%; border-bottom:solid;border-left:solid"><input asp-for="Player24CurrentWhist" class="form-control" /></td>
+                                            </tr>
+                                            <tr style="height:33%">
+                                                <td style="width:100%; border-bottom:solid;border-left:solid"><input asp-for="Player23CurrentWhist" class="form-control" /></td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr style="height:20%">
+                        <td>
+                            <table style="width:100%">
+                                <tr>
+                                    <td style="width:20%; border-right:solid"></td>
+                                    <td style="width:20%; border-right:solid;border-top:solid"><input asp-for="Player34CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%; border-right:solid;border-top:solid"><input asp-for="Player31CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%; border-right:solid;border-top:solid"><input asp-for="Player32CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%"></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+
+                <!--*******************************************************************************************-
                 <table>
                     <tr>
                         <td>
@@ -222,14 +340,18 @@
                         </td>
                     </tr>
                 </table>
+                    -->
             </div>
             <button type="submit"
                     class="badge-pill badge-info">
-                Submit 
+                Submit
             </button>
 
         </form>
     </div>
+<br />
+<div id="score" style="width:100%">
+    <partial name="\..\Shared\Board" model=@Model />
 </div>
 
 <div>

@@ -4481,7 +4481,11 @@ namespace Preferance.Controllers
                 return NotFound();
             }
 
-            var match = _context.Match.Include(p => p.Player1).Include(p => p.Player2).Include(p => p.Player3).Include(p => p.Player4).FirstOrDefault(m => m.Id == id);
+            var match = _context.Match.AsNoTracking().Include(p => p.Player1).Include(p => p.Player2).Include(p => p.Player3).Include(p => p.Player4)
+                .FirstOrDefault(m => m.Id == id);
+
+            _context.SaveChanges();
+
             if (match == null)
             {
                 return NotFound();
@@ -4503,62 +4507,145 @@ namespace Preferance.Controllers
             {
                 return NotFound();
             }
-
-            var _match = _context.Match.AsNoTracking().FirstOrDefault(m => m.Id == match.Id);
+            var _match = _context.Match.Include(p => p.Player1).Include(p => p.Player2).Include(p => p.Player3).Include(p => p.Player4).FirstOrDefault(m => m.Id == match.Id);
             if (ModelState.IsValid)
             {
-                match.Player1Pool = _match.Player1Pool + match.Player1CurrentPool.ToString() + ". ";
-                match.Player2Pool = _match.Player2Pool + match.Player2CurrentPool.ToString() + ". ";
-                match.Player3Pool = _match.Player3Pool + match.Player3CurrentPool.ToString() + ". ";
-                match.Player4Pool = _match.Player4Pool + match.Player4CurrentPool.ToString() + ". ";
-                match.Player12Whist = _match.Player12Whist + match.Player12CurrentWhist.ToString() + ". ";
-                match.Player13Whist = _match.Player13Whist + match.Player13CurrentWhist.ToString() + ". ";
-                match.Player14Whist = _match.Player14Whist + match.Player14CurrentWhist.ToString() + ". ";
-                match.Player21Whist = _match.Player21Whist + match.Player21CurrentWhist.ToString() + ". ";
-                match.Player23Whist = _match.Player23Whist + match.Player23CurrentWhist.ToString() + ". ";
-                match.Player24Whist = _match.Player24Whist + match.Player24CurrentWhist.ToString() + ". ";
-                match.Player31Whist = _match.Player31Whist + match.Player31CurrentWhist.ToString() + ". ";
-                match.Player32Whist = _match.Player32Whist + match.Player32CurrentWhist.ToString() + ". ";
-                match.Player34Whist = _match.Player34Whist + match.Player34CurrentWhist.ToString() + ". ";
-                match.Player41Whist = _match.Player41Whist + match.Player41CurrentWhist.ToString() + ". ";
-                match.Player42Whist = _match.Player42Whist + match.Player42CurrentWhist.ToString() + ". ";
-                match.Player43Whist = _match.Player43Whist + match.Player43CurrentWhist.ToString() + ". ";
+                if (!(match.Player1CurrentPool == _match.Player1CurrentPool)) 
+                {
+                    _match.Player1CurrentPool = match.Player1CurrentPool;
+                    _match.Player1Pool = _match.Player1Pool + match.Player1CurrentPool.ToString() + ". "; 
+                }
+                if (!(match.Player2CurrentPool == _match.Player2CurrentPool))
+                {
+                    _match.Player2CurrentPool = match.Player2CurrentPool;
+                    _match.Player2Pool = _match.Player2Pool + match.Player2CurrentPool.ToString() + ". ";
+                }
+                if (!(match.Player3CurrentPool == _match.Player3CurrentPool))
+                {
+                    _match.Player3CurrentPool = match.Player3CurrentPool;
+                    _match.Player3Pool = _match.Player3Pool + match.Player3CurrentPool.ToString() + ". ";
+                }
+                if (!(match.Player4CurrentPool == _match.Player4CurrentPool))
+                {
+                    _match.Player4CurrentPool = match.Player4CurrentPool;
+                    _match.Player4Pool = _match.Player4Pool + match.Player4CurrentPool.ToString() + ". ";
+                }
+                if (!(match.Player1CurrentDump == _match.Player1CurrentDump))
+                {
+                    _match.Player1CurrentDump = match.Player1CurrentDump;
+                    _match.Player1Dump = _match.Player1Dump + match.Player1CurrentDump.ToString() + ". ";
+                }
+                if (!(match.Player2CurrentDump == _match.Player2CurrentDump))
+                {
+                    _match.Player2CurrentDump = match.Player2CurrentDump;
+                    _match.Player2Dump = _match.Player2Dump + match.Player2CurrentDump.ToString() + ". ";
+                }
+                if (!(match.Player3CurrentDump == _match.Player3CurrentDump))
+                {
+                    _match.Player3CurrentDump = match.Player3CurrentDump;
+                    _match.Player3Dump = _match.Player3Dump + match.Player3CurrentDump.ToString() + ". ";
+                }
+                if (!(match.Player4CurrentDump == _match.Player4CurrentDump))
+                {
+                    _match.Player4CurrentDump = match.Player4CurrentDump;
+                    _match.Player4Dump = _match.Player4Dump + match.Player4CurrentDump.ToString() + ". ";
+                }
+                if (!(match.Player12CurrentWhist == _match.Player12CurrentWhist))
+                {
+                    _match.Player12CurrentWhist = match.Player12CurrentWhist;
+                    _match.Player12Whist = _match.Player12Whist + match.Player12CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player13CurrentWhist == _match.Player13CurrentWhist))
+                {
+                    _match.Player13CurrentWhist = match.Player13CurrentWhist;
+                    _match.Player13Whist = _match.Player13Whist + match.Player13CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player14CurrentWhist == _match.Player14CurrentWhist))
+                {
+                    _match.Player14CurrentWhist = match.Player14CurrentWhist;
+                    _match.Player14Whist = _match.Player14Whist + match.Player14CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player21CurrentWhist == _match.Player21CurrentWhist))
+                {
+                    _match.Player21CurrentWhist = match.Player21CurrentWhist;
+                    _match.Player21Whist = _match.Player21Whist + match.Player21CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player23CurrentWhist == _match.Player23CurrentWhist))
+                {
+                    _match.Player23CurrentWhist = match.Player23CurrentWhist;
+                    _match.Player23Whist = _match.Player23Whist + match.Player23CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player24CurrentWhist == _match.Player24CurrentWhist))
+                {
+                    _match.Player24CurrentWhist = match.Player24CurrentWhist;
+                    _match.Player24Whist = _match.Player24Whist + match.Player24CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player31CurrentWhist == _match.Player31CurrentWhist))
+                {
+                    _match.Player31CurrentWhist = match.Player31CurrentWhist;
+                    _match.Player31Whist = _match.Player31Whist + match.Player31CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player32CurrentWhist == _match.Player32CurrentWhist))
+                {
+                    _match.Player32CurrentWhist = match.Player32CurrentWhist;
+                    _match.Player32Whist = _match.Player32Whist + match.Player32CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player34CurrentWhist == _match.Player34CurrentWhist))
+                {
+                    _match.Player34CurrentWhist = match.Player34CurrentWhist;
+                    _match.Player34Whist = _match.Player34Whist + match.Player34CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player41CurrentWhist == _match.Player41CurrentWhist))
+                {
+                    _match.Player41CurrentWhist = match.Player41CurrentWhist;
+                    _match.Player41Whist = _match.Player41Whist + match.Player41CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player42CurrentWhist == _match.Player42CurrentWhist))
+                {
+                    _match.Player42CurrentWhist = match.Player42CurrentWhist;
+                    _match.Player42Whist = _match.Player42Whist + match.Player42CurrentWhist.ToString() + ". ";
+                }
+                if (!(match.Player43CurrentWhist == _match.Player43CurrentWhist))
+                {
+                    _match.Player43CurrentWhist = match.Player43CurrentWhist;
+                    _match.Player43Whist = _match.Player43Whist + match.Player43CurrentWhist.ToString() + ". ";
+                }
 
                 float p1TempDump = 0;
                 float p2TempDump = 0;
                 float p3TempDump = 0;
                 float p4TempDump = 0;
 
-                p1TempDump = match.Player1CurrentDump - match.Player1CurrentPool;
-                p2TempDump = match.Player2CurrentDump - match.Player2CurrentPool;
-                p3TempDump = match.Player3CurrentDump - match.Player3CurrentPool;
-                p4TempDump = match.Player4CurrentDump - match.Player4CurrentPool;
+                p1TempDump = _match.Player1CurrentDump - _match.Player1CurrentPool;
+                p2TempDump = _match.Player2CurrentDump - _match.Player2CurrentPool;
+                p3TempDump = _match.Player3CurrentDump - _match.Player3CurrentPool;
+                p4TempDump = _match.Player4CurrentDump - _match.Player4CurrentPool;
 
-                match.Player1CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p1TempDump) * 10
-                    + match.Player12CurrentWhist + match.Player13CurrentWhist + match.Player14CurrentWhist
-                    - match.Player21CurrentWhist - match.Player31CurrentWhist - match.Player41CurrentWhist;
+                _match.Player1CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p1TempDump) * 10
+                    + _match.Player12CurrentWhist + _match.Player13CurrentWhist + _match.Player14CurrentWhist
+                    - _match.Player21CurrentWhist - _match.Player31CurrentWhist - _match.Player41CurrentWhist;
 
-                match.Player2CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p2TempDump) * 10
-                    + match.Player21CurrentWhist + match.Player23CurrentWhist + match.Player24CurrentWhist
-                    - match.Player12CurrentWhist - match.Player32CurrentWhist - match.Player42CurrentWhist;
+                _match.Player2CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p2TempDump) * 10
+                    + _match.Player21CurrentWhist + _match.Player23CurrentWhist + _match.Player24CurrentWhist
+                    - _match.Player12CurrentWhist - _match.Player32CurrentWhist - _match.Player42CurrentWhist;
 
-                match.Player3CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p3TempDump) * 10
-                    + match.Player31CurrentWhist + match.Player32CurrentWhist + match.Player34CurrentWhist
-                    - match.Player13CurrentWhist - match.Player23CurrentWhist - match.Player43CurrentWhist;
+                _match.Player3CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p3TempDump) * 10
+                    + _match.Player31CurrentWhist + _match.Player32CurrentWhist + _match.Player34CurrentWhist
+                    - _match.Player13CurrentWhist - _match.Player23CurrentWhist - _match.Player43CurrentWhist;
 
-                match.Player4CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p4TempDump) * 10
-                    + match.Player41CurrentWhist + match.Player42CurrentWhist + match.Player43CurrentWhist
-                    - match.Player14CurrentWhist - match.Player24CurrentWhist - match.Player34CurrentWhist;
+                _match.Player4CurrentScore = ((p1TempDump + p2TempDump + p3TempDump + p4TempDump) / 4 - p4TempDump) * 10
+                    + _match.Player41CurrentWhist + _match.Player42CurrentWhist + _match.Player43CurrentWhist
+                    - _match.Player14CurrentWhist - _match.Player24CurrentWhist - _match.Player34CurrentWhist;
 
                 
                 try
                 {
-                    _context.Update(match);
+                    _context.Update(_match);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!MatchExists(match.Id))
+                    if (!MatchExists(_match.Id))
                     {
                         return NotFound();
                     }
@@ -4567,9 +4654,9 @@ namespace Preferance.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+//                return RedirectToAction(nameof(Index));
             }
-            return View(match);
+            return View(_match);
         }
 
         // GET: Matches/Delete/5
