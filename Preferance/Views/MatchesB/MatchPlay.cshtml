@@ -4,7 +4,12 @@
     ViewData["Title"] = "Match";
 }
 
-<label class="alert-danger">@ViewBag.Message</label>
+<label class="alert-danger">@ViewBag.Message</label><br />
+<label id="lblMessage" ></label><br />
+@if  (@Model.Games[Model.Games.Count - 1].Dealer.Id == ViewBag.Player)
+{
+    <a href ="/../MatchesB/CompleteGame?id=@Model.Id">Confirm all pass</a>
+}
 <div>
     <table style="background-color:aquamarine;width:100%;border:thin">
         <tr style="width:100%;text-align:center;font-weight:400">
@@ -178,10 +183,42 @@
 
     function isNumeric(n) {
         return !isNaN(parseFloat(n)) && isFinite(n);
+
     }
 
     function showOrder() {
         document.getElementById("OrderRow").hidden = false;
     }
 
+    window.onload = function () {
+        var d = new Date();
+        document.getElementById("lblMessage").innerHTML = "Started Listening " + d.toString();
+        if (window.EventSource == undefined) {
+            // If not supported
+            document.getElementById('lblMessage').innerHTML = "Your browser doesn't support Server Sent Events.";
+            return;
+        } else {
+            var source = new EventSource('/../MatchesB/ShootEvent/@Model.Id');
+
+            source.onopen = function (event) {
+                document.getElementById('lblMessage').innerHTML += 'Connection Opened.';
+            };
+
+            source.onerror = function (event) {
+                if (event.eventPhase == EventSource.CLOSED) {
+                    document.getElementById('lblMessage').innerHTML += 'Connection Closed.';
+                }
+                else {
+                    document.getElementById('lblMessage').innerHTML += 'Connection Error.';
+                }
+            };
+
+            source.onmessage = function (event) {
+                document.getElementById('lblMessage').innerHTML = event.data;
+                if (event.data == "Playing") {
+                    location.href='@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")';
+                }
+            };
+        }
+    }
 </script>

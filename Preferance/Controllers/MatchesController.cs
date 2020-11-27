@@ -1677,8 +1677,9 @@ namespace Preferance.Controllers
 
         public async Task<IActionResult> CompleteGame(string id)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games).Include(m => m.LastHand)
               .FirstOrDefault(m => m.Id == id);
+            match.LastHand.Cards = _context.Card.Where(c => c.HandId == match.LastHand.Id).OrderBy(c => c.Sequence).ToList();
 
             Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
                 .Include(o => o.Player1Hand).Include(o => o.Player2Hand).Include(o => o.Player3Hand).Include(o => o.Player4Hand)
@@ -1740,6 +1741,7 @@ namespace Preferance.Controllers
 
             Game newGame = new Game();
             match.Games.Add(newGame);
+            match.LastHand.Cards.Clear();
             _context.SaveChanges();
 
             if (game.Dealer.Id == game.Player1.Id)
@@ -1809,8 +1811,9 @@ namespace Preferance.Controllers
 
         public async Task<IActionResult> CloseIncompletePointGame(string id, int activeHands)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games).Include(m => m.LastHand)
               .FirstOrDefault(m => m.Id == id);
+            match.LastHand.Cards = _context.Card.Where(c => c.HandId == match.LastHand.Id).OrderBy(c => c.Sequence).ToList();
 
             Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
                 .ToList()[0];
@@ -2494,8 +2497,9 @@ namespace Preferance.Controllers
 
         public async Task<IActionResult> CloseIncompleteMisere(string id, int activeHands)
         {
-            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games)
+            var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games).Include(m => m.LastHand)
               .FirstOrDefault(m => m.Id == id);
+            match.LastHand.Cards = _context.Card.Where(c => c.HandId == match.LastHand.Id).OrderBy(c => c.Sequence).ToList();
 
             Game game = _context.Game.Where(m => m.MatchId == match.Id).OrderByDescending(g => g.Id).Take(1)
                 .ToList()[0];

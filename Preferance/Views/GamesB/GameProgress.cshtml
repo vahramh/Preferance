@@ -4,6 +4,11 @@
     ViewData["Title"] = "Match";
 }
 
+<label id="lblMessage">N</label>
+<br />
+<label id="lblModel">@Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count()</label>
+<br />
+<label id="lblModel2"></label>
 <div>
     <table style="background-color:aquamarine;width:100%;border:thin">
         <tr style="width:100%;text-align:center;font-weight:400">
@@ -317,7 +322,8 @@
                             }
 
                             if (handCardsSuit.length == 3) {
-                                if (((!(handCardsSuit[2] == trumpSuit)) & ((!(handCardsSuit[2] == handCardsSuit[1])) || suitALessThanB(handCardsValue[2], handCardsValue[1]))) & ((!(handCardsSuit[0] == trumpSuit)) & ((!(handCardsSuit[0] == handCardsSuit[1])) || suitALessThanB(handCardsValue[0], handCardsValue[1]))) & ((handCardsSuit[0] == handCardsSuit[1]) || (handCardsSuit[0] == trumpSuit))) {
+                            // I'm 4th player
+                                if (((!(handCardsSuit[2] == trumpSuit)) & ((!(handCardsSuit[2] == handCardsSuit[1])) || suitALessThanB(handCardsValue[2], handCardsValue[1]))) & ((!(handCardsSuit[0] == trumpSuit)) & ((!(handCardsSuit[0] == handCardsSuit[1])) || suitALessThanB(handCardsValue[0], handCardsValue[1]))) & ((handCardsSuit[0] == handCardsSuit[1]) || (handCardsSuit[1] == trumpSuit))) {
                                     friendHigh = true;
                                 }
                                 else {
@@ -660,6 +666,34 @@
             return;
         }
 
-        AutoRefresh(3000);
+        if (window.EventSource == undefined) {
+            // If not supported
+            document.getElementById('lblMessage').innerHTML = "Your browser doesn't support Server Sent Events.";
+            AutoRefresh(3000);
+            return;
+        } else {
+            var source = new EventSource('/../GamesB/ShootEventB/@Model.Id');
+
+            source.onopen = function (event) {
+                document.getElementById('lblMessage').innerHTML += 'Connection Opened.';
+            };
+
+            source.onerror = function (event) {
+                if (event.eventPhase == EventSource.CLOSED) {
+                    document.getElementById('lblMessage').innerHTML += 'Connection Closed.';
+                    setTimeout(() => { location.reload() }, 3000);
+                }
+                else {
+                    document.getElementById('lblMessage').innerHTML += 'Connection Error.';
+                }
+            };
+
+            source.onmessage = function (event) {
+                document.getElementById('lblMessage').innerHTML = event.data;
+                if (!(event.data == @Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count())) {
+                    location.href='@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")';
+                }
+            };
+        }
     }
 </script>

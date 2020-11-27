@@ -122,7 +122,7 @@
     {
                 @if ((@Model.Games[Model.Games.Count - 1].NextPlayer.Id == @ViewBag.Player) & (@Model.Games[Model.Games.Count - 1].MisereOffered == ""))
         {
-                <input type="button" value="Pass" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
+                <input type="button" value="Pass" class="btn-block badge-pill badge-info" style="background-color:gray" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=pass")'" />
         }
     }
 
@@ -134,7 +134,7 @@
         {
                 @if (Model.Games[Model.Games.Count - 1].MiserePossible)
             {
-                <input type="button" value="Misère" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=Misere")'" />
+                <input type="button" value="Misère" class="btn-block badge-pill badge-info" style="background-color:red" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=Misere")'" />
             }
         }
     }
@@ -148,7 +148,7 @@
             {
                 @if (Model.Games[Model.Games.Count - 1].MisereSharable)
                 {
-                <input type="button" value="Offer Misère" class="btn-block badge-pill badge-info" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=offer")'" />
+                <input type="button" value="Offer Misère" class="btn-block badge-pill badge-info" style="background-color:hotpink" onclick="location.href='@string.Concat("/../Matches/Play?id=", Model.Id, "&bid=offer")'" />
                 }
             }
         }

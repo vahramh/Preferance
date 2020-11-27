@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -38,9 +39,11 @@ namespace Preferance.Controllers
                 return View("Error", errorView);
             }
 
+
             var match = _context.Match.Include(o => o.Player1).Include(o => o.Player2).Include(o => o.Player3).Include(o => o.Player4).Include(m => m.Games).Include(o => o.LastHand)
                 .ThenInclude(h => h.Cards)
               .FirstOrDefault(m => m.Id == id);
+            await _context.Entry(match).ReloadAsync();
 
             match.LastHand.Cards = _context.Card.Where(c => c.HandId == match.LastHand.Id).OrderBy(c => c.Sequence).ToList();
 
@@ -59,6 +62,7 @@ namespace Preferance.Controllers
                 errorView = new ErrorViewModel();
                 return View("Error", errorView);
             }
+            await _context.Entry(game).ReloadAsync();
 
             game.Player1Hand.Cards = _context.Card.Where(c => c.HandId == game.Player1Hand.Id).OrderBy(c => c.Seniority).ToList();
             game.Player2Hand.Cards = _context.Card.Where(c => c.HandId == game.Player2Hand.Id).OrderBy(c => c.Seniority).ToList();
@@ -75,6 +79,7 @@ namespace Preferance.Controllers
             else
             {
                 game.HandInPlay.Cards = _context.Card.Where(c => c.HandId == game.HandInPlay.Id).OrderBy(c => c.Sequence).ToList();
+                await _context.Entry(game).ReloadAsync();
             }
 
             if (move == "")
@@ -642,7 +647,7 @@ namespace Preferance.Controllers
 
             if (Offer == "reject")
             {
-                game.OutcomeOffer = -2;
+                game.OutcomeOffer = -1;
                 game.Status = "Playing";
                 _context.SaveChanges();
                 Response.Redirect("/../../Games/Play/" + id);
@@ -848,6 +853,45 @@ namespace Preferance.Controllers
         private bool GameExists(int id)
         {
             return _context.Game.Any(e => e.Id == id);
+        }
+
+        [HttpGet]
+        public async Task ShootEvent(string id)
+        {
+            HttpResponse response = Response;
+            response.Headers.Add("Content-Type", "text/event-stream");
+
+            var tWait = new Random();
+            await Task.Delay(tWait.Next(3000));
+
+            for (var i = 0; true; ++i)
+            {
+                Game game = _context.Game.AsNoTracking().Where(m => m.MatchId == id).OrderByDescending(g => g.Id).Take(1)
+                    .Include(g => g.HandInPlay).ThenInclude(h => h.Cards)
+                    .ToList()[0];
+
+                if (game.Status == "Playing")
+                {
+                    if (game.HandInPlay == null)
+                    {
+                        await response
+                            .WriteAsync($"data:0\n\n");
+                    }
+                    else
+                    {
+                        await response
+                            .WriteAsync($"data:" + game.HandInPlay.Cards.Count().ToString() + "\n\n");
+                    }
+                }
+                else
+                {
+                    await response
+                        .WriteAsync($"data:" + game.Status + "\n\n");
+                }
+
+                await Task.Delay(3000);
+            }
+            response.Body.Flush();
         }
     }
 }

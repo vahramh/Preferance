@@ -4,6 +4,8 @@ using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Security.Claims;
 using System.Threading.Tasks;
+//using AspNetCore;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +17,8 @@ namespace Preferance.Controllers
 {
     public class GamesBController : Controller
     {
+        private string sMessage = "";
+
         private readonly ApplicationDbContext _context;
 
         ErrorViewModel errorView = null;
@@ -95,7 +99,7 @@ namespace Preferance.Controllers
             {
                 Collect(game, move);
                 _context.SaveChanges();
-
+                sMessage = "Move";
 
                 if (game.NorthHand.Cards.Count + game.SouthHand.Cards.Count + game.EastHand.Cards.Count + game.WestHand.Cards.Count == 0)
                 {
@@ -335,6 +339,8 @@ namespace Preferance.Controllers
                         }
                     }
                 }
+
+                sMessage = "Move";
 
                 if (game.HandInPlay.Cards.Count == 4)
                 {
@@ -824,6 +830,36 @@ namespace Preferance.Controllers
         private bool GameExists(int id)
         {
             return _context.Game.Any(e => e.Id == id);
+        }
+
+        [HttpGet]
+        public async Task ShootEventB(string id)
+        {
+            HttpResponse response = Response;
+            response.Headers.Add("Content-Type", "text/event-stream");
+
+            for (var i = 0; true; ++i)
+            {
+                GameB game = _context.GameB.AsNoTracking().Where(m => m.MatchBId == id).OrderByDescending(g => g.Id).Take(1)
+                    .Include(g => g.HandInPlay).ThenInclude(h => h.Cards)
+                    .ToList()[0];
+
+                if (game.HandInPlay == null)
+                {
+                    await response
+                        .WriteAsync($"data:0\n\n");
+                }
+                else
+                {
+                    await response
+                        .WriteAsync($"data:" + game.HandInPlay.Cards.Count().ToString() + "\n\n");
+                }
+
+                sMessage = "";
+
+                await Task.Delay(100);
+            }
+            response.Body.Flush();
         }
     }
 }

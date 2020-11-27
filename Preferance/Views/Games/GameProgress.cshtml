@@ -4,6 +4,10 @@
     ViewData["Title"] = "Match";
 }
 
+<label id="lblMessage">N</label>
+<br />
+<label id="lblModel">@Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count()</label><br />
+<label id="lblModel2"></label>
 <div>
     <table style="background-color:aquamarine;width:100%;border:thin">
         <tr style="width:100%;text-align:center;font-weight:400">
@@ -752,6 +756,35 @@
         }
 
 
-        AutoRefresh(3000);
+        if (window.EventSource == undefined) {
+            document.getElementById('lblMessage').innerHTML = "Your browser doesn't support Server Sent Events.";
+            AutoRefresh(3000);
+            return;
+        } else {
+            var source = new EventSource('/../Games/ShootEvent/@Model.Id');
+
+            source.onopen = function (event) {
+                document.getElementById('lblMessage').innerHTML += 'Connection Opened.';
+            };
+
+            source.onerror = function (event) {
+                if (event.eventPhase == EventSource.CLOSED) {
+                    document.getElementById('lblMessage').innerHTML += 'Connection Closed.';
+                    setTimeout(() => { location.reload() }, 3000);
+                }
+                else {
+                    document.getElementById('lblMessage').innerHTML += 'Connection Error.';
+                }
+            };
+
+            source.onmessage = function (event) {
+                document.getElementById('lblMessage').innerHTML = event.data;
+                if (!(event.data == document.getElementById('lblModel').innerHTML)) {
+                    setTimeout(() => { location.reload() }, Math.floor(Math.random() * 2000));
+                }
+            };
+    }
+
+//        AutoRefresh(3000);
     }
 </script>
