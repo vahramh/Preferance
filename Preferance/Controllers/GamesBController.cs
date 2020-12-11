@@ -857,7 +857,7 @@ namespace Preferance.Controllers
 
                 sMessage = "";
 
-                await Task.Delay(100);
+                await Task.Delay(3000);
             }
             response.Body.Flush();
         }

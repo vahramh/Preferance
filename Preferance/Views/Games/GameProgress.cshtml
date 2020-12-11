@@ -125,7 +125,7 @@
                     var handcards = Model.Games[Model.Games.Count - 1].Talon.Cards;
                     @if (handcards.Count > 0)
                     {
-                        <button id="btnTalon" class="btn-block badge-pill badge-info" onclick="openTalon()">Open Talon</button>
+                        <button id="btnTalon" class="btn-block badge-pill badge-info" onclick="openTalon()" hidden>Open Talon</button>
                     }
                     else
                     {
@@ -727,7 +727,7 @@
         if (str.indexOf("&move") > 0) {
             window.location = str.substring(0, str.indexOf("&move"));
         }
-        if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Playing")) {
+        if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Playing") & (!(("@Model.Games[Model.Games.Count - 1].Dealer.Id" == "@ViewBag.Player")))) {
             return;
         }
         if (("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Status" == "Collecting")) {
@@ -752,6 +752,12 @@
             if (("@Model.Games[Model.Games.Count - 1].Player4.Id" == "@ViewBag.Player") & (!("@Model.Games[Model.Games.Count - 1].ActivePlayer.Id" == "@Model.Games[Model.Games.Count - 1].Player4.Id")) & (("@Model.Games[Model.Games.Count - 1].Dealer.Id" == "@Model.Games[Model.Games.Count - 1].Player3.Id") || ("@Model.Games[Model.Games.Count - 1].ActivePlayer.Id" == "@Model.Games[Model.Games.Count - 1].Player3.Id") & ("@Model.Games[Model.Games.Count - 1].Dealer.Id" == "@Model.Games[Model.Games.Count - 1].Player2.Id")))
             {
                 return;
+            }
+        }
+
+        if (("@Model.Games[Model.Games.Count - 1].Dealer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].NextPlayer.Id" == "@ViewBag.Player") & ("@Model.Games[Model.Games.Count - 1].Type" == "All-Pass") & (!("@Model.Games[Model.Games.Count - 1].Status" == "Collecting"))) {
+            if (@Model.Games[Model.Games.Count - 1].Talon.Cards.Count > 0) {
+                openTalon();
             }
         }
 

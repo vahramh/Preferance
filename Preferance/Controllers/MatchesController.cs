@@ -3168,7 +3168,7 @@ namespace Preferance.Controllers
                     w2Dump = match.Player3CurrentDump;
                     w2 = match.Player31CurrentWhist;
                     wd = match.Player41CurrentWhist;
-                    CalculatePointGameResult(game.Value, game.Player1HandResult.hands.Count(), game.Player2Whisting, game.Player3Whisting, game.Player2HandResult.hands.Count(), game.Player4HandResult.hands.Count(), ref currentPool, ref currentDump, ref w1, ref w1Dump, ref w2Dump, ref w2, ref wd);
+                    CalculatePointGameResult(game.Value, game.Player1HandResult.hands.Count(), game.Player2Whisting, game.Player3Whisting, game.Player2HandResult.hands.Count(), game.Player3HandResult.hands.Count(), ref currentPool, ref currentDump, ref w1, ref w1Dump, ref w2Dump, ref w2, ref wd);
                     if (!(match.Player1CurrentPool == currentPool))
                     {
                         match.Player1CurrentPool = currentPool;

@@ -7,7 +7,7 @@
 <h1>Edit</h1>
 
 <hr />
-    <div class="row" style="width:100%">
+    <div id="_Game" class="row" style="width:100%" hidden>
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
@@ -18,9 +18,9 @@
                             <table style="width:100%; height:100%">
                                 <tr>
                                     <td style="width:20%; border-right:solid"></td>
-                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input asp-for="Player14CurrentWhist" class="form-control" /></td>
-                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input asp-for="Player13CurrentWhist" class="form-control" /></td>
-                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input asp-for="Player12CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input id="_Player14CurrentWhist" type="number" /><input id="Player14CurrentWhist" asp-for="Player14CurrentWhist" class="form-control" hidden/></td>
+                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input id="_Player13CurrentWhist" type="number" /><input id="Player13CurrentWhist" asp-for="Player13CurrentWhist" class="form-control" hidden/></td>
+                                    <td style="width:20%; border-right:solid;border-bottom:solid"><input id="_Player12CurrentWhist" type="number" /><input id="Player12CurrentWhist" asp-for="Player12CurrentWhist" class="form-control" hidden/></td>
                                     <td style="width:20%"></td>
                                 </tr>
                             </table>
@@ -33,13 +33,13 @@
                                     <td style="width:20%">
                                         <table style="height:100%; width:100%">
                                             <tr style="height:33%">
-                                                <td style="width:100%; border-top:solid; border-bottom:solid;border-right:solid"><input asp-for="Player41CurrentWhist" class="form-control" /></td>
+                                                <td style="width:100%; border-top:solid; border-bottom:solid;border-right:solid"><input id="_Player41CurrentWhist" type="number" /><input id="Player41CurrentWhist" asp-for="Player41CurrentWhist" class="form-control" hidden/></td>
                                             </tr>
                                             <tr style="height:33%">
-                                                <td style="width:100%; border-bottom:solid;border-right:solid"><input asp-for="Player42CurrentWhist" class="form-control" /></td>
+                                                <td style="width:100%; border-bottom:solid;border-right:solid"><input id="_Player42CurrentWhist" type="number" /><input id="Player42CurrentWhist" asp-for="Player42CurrentWhist" class="form-control" hidden/></td>
                                             </tr>
                                             <tr style="height:33%">
-                                                <td style="width:100%; border-bottom:solid;border-right:solid"><input asp-for="Player43CurrentWhist" class="form-control" /></td>
+                                                <td style="width:100%; border-bottom:solid;border-right:solid"><input id="_Player43CurrentWhist" type="number" /><input id="Player43CurrentWhist" asp-for="Player43CurrentWhist" class="form-control" hidden/></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -47,20 +47,20 @@
                                         <table style="height:100%; width:100%; border:solid">
                                             <tr style="height:5%">
                                                 <td style="width:5%"></td>
-                                                <td style="width:90%"><input asp-for="Player1CurrentPool" class="form-control" /></td>
+                                                <td style="width:90%"><input id="_Player1CurrentPool" type="number" /><input id="Player1CurrentPool" asp-for="Player1CurrentPool" class="form-control" hidden/></td>
                                                 <td style="width:5%"></td>
                                             </tr>
                                             <tr>
-                                                <td style="width:5%"><input asp-for="Player4CurrentPool" class="form-control" /></td>
+                                                <td style="width:5%"><input id="_Player4CurrentPool" type="number" /><input id="Player4CurrentPool" asp-for="Player4CurrentPool" class="form-control" hidden/></td>
                                                 <td style="width:90%">
                                                     <table style="width:100%; height:100%; border:solid">
                                                         <tr style="height:33%">
                                                             <td style="width:33%"></td>
-                                                            <td style="width:34%"><input asp-for="Player1CurrentDump" class="form-control" /></td>
+                                                            <td style="width:34%"><input id="_Player1CurrentDump" type="number" /><input id="Player1CurrentDump" asp-for="Player1CurrentDump" class="form-control" hidden/></td>
                                                             <td style="width:33%"></td>
                                                         </tr>
                                                         <tr style="height:34%">
-                                                            <td style="width:33%"><input asp-for="Player4CurrentDump" class="form-control" /></td>
+                                                            <td style="width:33%"><input id="_Player4CurrentDump" type="number" /><input id="Player4CurrentDump" asp-for="Player4CurrentDump" class="form-control" hidden/></td>
                                                             <td style="width:34%">
                                                                 <table style="width:100%; height:100%; border:solid">
                                                                     <tr style="height:33%">
@@ -80,20 +80,20 @@
                                                                     </tr>
                                                                 </table>
                                                             </td>
-                                                            <td style="width:33%"><input asp-for="Player2CurrentDump" class="form-control" /></td>
+                                                            <td style="width:33%"><input id="_Player2CurrentDump" type="number" /><input id="Player2CurrentDump" asp-for="Player2CurrentDump" class="form-control" hidden/></td>
                                                         </tr>
                                                         <tr style="height:33%">
                                                             <td style="width:33%"></td>
-                                                            <td style="width:34%"><input asp-for="Player3CurrentDump" class="form-control" /></td>
+                                                            <td style="width:34%"><input id="_Player3CurrentDump" type="number" /><input id="Player3CurrentDump" asp-for="Player3CurrentDump" class="form-control" hidden/></td>
                                                             <td style="width:33%"></td>
                                                         </tr>
                                                     </table>
                                                 </td>
-                                                <td style="width:5%"><input asp-for="Player2CurrentPool" class="form-control" /></td>
+                                                <td style="width:5%"><input id="_Player2CurrentPool" type="number" /><input id="Player2CurrentPool" asp-for="Player2CurrentPool" class="form-control" hidden/></td>
                                             </tr>
                                             <tr style="height:5%">
                                                 <td style="width:5%"></td>
-                                                <td style="width:90%"><input asp-for="Player3CurrentPool" class="form-control" /></td>
+                                                <td style="width:90%"><input id="_Player3CurrentPool" type="number" /><input id="Player3CurrentPool" asp-for="Player3CurrentPool" class="form-control" hidden/></td>
                                                 <td style="width:5%"></td>
                                             </tr>
                                         </table>
@@ -101,13 +101,13 @@
                                     <td style="width:20%">
                                         <table style="width:100%; height:100%">
                                             <tr style="height:33%">
-                                                <td style="width:100%; border-top:solid;border-bottom:solid;border-left:solid"><input asp-for="Player21CurrentWhist" class="form-control" /></td>
+                                                <td style="width:100%; border-top:solid;border-bottom:solid;border-left:solid"><input id="_Player21CurrentWhist" type="number" /><input id="Player21CurrentWhist" asp-for="Player21CurrentWhist" class="form-control" hidden/></td>
                                             </tr>
                                             <tr style="height:33%">
-                                                <td style="width:100%; border-bottom:solid;border-left:solid"><input asp-for="Player24CurrentWhist" class="form-control" /></td>
+                                                <td style="width:100%; border-bottom:solid;border-left:solid"><input id="_Player24CurrentWhist" type="number" /><input id="Player24CurrentWhist" asp-for="Player24CurrentWhist" class="form-control" hidden/></td>
                                             </tr>
                                             <tr style="height:33%">
-                                                <td style="width:100%; border-bottom:solid;border-left:solid"><input asp-for="Player23CurrentWhist" class="form-control" /></td>
+                                                <td style="width:100%; border-bottom:solid;border-left:solid"><input id="_Player23CurrentWhist" type="number" /><input id="Player23CurrentWhist" asp-for="Player23CurrentWhist" class="form-control" hidden/></td>
                                             </tr>
                                         </table>
                                     </td>
@@ -120,9 +120,9 @@
                             <table style="width:100%">
                                 <tr>
                                     <td style="width:20%; border-right:solid"></td>
-                                    <td style="width:20%; border-right:solid;border-top:solid"><input asp-for="Player34CurrentWhist" class="form-control" /></td>
-                                    <td style="width:20%; border-right:solid;border-top:solid"><input asp-for="Player31CurrentWhist" class="form-control" /></td>
-                                    <td style="width:20%; border-right:solid;border-top:solid"><input asp-for="Player32CurrentWhist" class="form-control" /></td>
+                                    <td style="width:20%; border-right:solid;border-top:solid"><input id="_Player34CurrentWhist" type="number" /><input id="Player34CurrentWhist" asp-for="Player34CurrentWhist" class="form-control" hidden/></td>
+                                    <td style="width:20%; border-right:solid;border-top:solid"><input id="_Player31CurrentWhist" type="number" /><input id="Player31CurrentWhist" asp-for="Player31CurrentWhist" class="form-control" hidden/></td>
+                                    <td style="width:20%; border-right:solid;border-top:solid"><input id="_Player32CurrentWhist" type="number" /><input id="Player32CurrentWhist" asp-for="Player32CurrentWhist" class="form-control" hidden/></td>
                                     <td style="width:20%"></td>
                                 </tr>
                             </table>
@@ -130,226 +130,15 @@
                     </tr>
                 </table>
 
-
-                <!--*******************************************************************************************-
-                <table>
-                    <tr>
-                        <td>
-                            <label>@Model.Player1.Name</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Pool:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player1CurrentPool" class="form-control" />
-                            <span asp-validation-for="Player1CurrentPool" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Dump:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player1CurrentDump" class="form-control" />
-                            <span asp-validation-for="Player1CurrentDump" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player2.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player12CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player12CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player3.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player13CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player13CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player4.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player14CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player14CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <td>
-                            <label>@Model.Player2.Name</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Pool:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player2CurrentPool" class="form-control" />
-                            <span asp-validation-for="Player2CurrentPool" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Dump:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player2CurrentDump" class="form-control" />
-                            <span asp-validation-for="Player2CurrentDump" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player1.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player21CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player21CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player3.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player23CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player23CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player4.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player24CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player24CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <td>
-                            <label>@Model.Player3.Name</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Pool:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player3CurrentPool" class="form-control" />
-                            <span asp-validation-for="Player3CurrentPool" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Dump:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player3CurrentDump" class="form-control" />
-                            <span asp-validation-for="Player3CurrentDump" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player1.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player31CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player31CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player2.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player32CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player32CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player4.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player34CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player34CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                </table>
-                <table>
-                    <tr>
-                        <td>
-                            <label>@Model.Player4.Name</label>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Pool:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player4CurrentPool" class="form-control" />
-                            <span asp-validation-for="Player4CurrentPool" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Dump:</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player4CurrentDump" class="form-control" />
-                            <span asp-validation-for="Player4CurrentDump" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player1.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player41CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player41CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player2.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player42CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player42CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <label>Whist against </label><label>@Model.Player3.Name</label>
-                        </td>
-                        <td>
-                            <input asp-for="Player43CurrentWhist" class="form-control" />
-                            <span asp-validation-for="Player43CurrentWhist" class="text-danger"></span>
-                        </td>
-                    </tr>
-                </table>
-                    -->
             </div>
             <button type="submit"
-                    class="badge-pill badge-info">
+                    class="badge-pill badge-info" onclick="Calculate()">
                 Submit
             </button>
-
         </form>
     </div>
 <br />
+<input type="button" onclick="unhide()" value="New Score"/>
 <div id="score" style="width:100%">
     <partial name="\..\Shared\Board" model=@Model />
 </div>
@@ -361,3 +150,33 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    function Calculate()
+        {
+        document.getElementById("Player12CurrentWhist").value = Number(document.getElementById("Player12CurrentWhist").value) + Number(document.getElementById("_Player12CurrentWhist").value);
+        document.getElementById("Player13CurrentWhist").value = Number(document.getElementById("Player13CurrentWhist").value) + Number(document.getElementById("_Player13CurrentWhist").value);
+        document.getElementById("Player14CurrentWhist").value = Number(document.getElementById("Player14CurrentWhist").value) + Number(document.getElementById("_Player14CurrentWhist").value);
+        document.getElementById("Player21CurrentWhist").value = Number(document.getElementById("Player21CurrentWhist").value) + Number(document.getElementById("_Player21CurrentWhist").value);
+        document.getElementById("Player23CurrentWhist").value = Number(document.getElementById("Player23CurrentWhist").value) + Number(document.getElementById("_Player23CurrentWhist").value);
+        document.getElementById("Player24CurrentWhist").value = Number(document.getElementById("Player24CurrentWhist").value) + Number(document.getElementById("_Player24CurrentWhist").value);
+        document.getElementById("Player31CurrentWhist").value = Number(document.getElementById("Player31CurrentWhist").value) + Number(document.getElementById("_Player31CurrentWhist").value);
+        document.getElementById("Player32CurrentWhist").value = Number(document.getElementById("Player32CurrentWhist").value) + Number(document.getElementById("_Player32CurrentWhist").value);
+        document.getElementById("Player34CurrentWhist").value = Number(document.getElementById("Player34CurrentWhist").value) + Number(document.getElementById("_Player34CurrentWhist").value);
+        document.getElementById("Player41CurrentWhist").value = Number(document.getElementById("Player41CurrentWhist").value) + Number(document.getElementById("_Player41CurrentWhist").value);
+        document.getElementById("Player42CurrentWhist").value = Number(document.getElementById("Player42CurrentWhist").value) + Number(document.getElementById("_Player42CurrentWhist").value);
+        document.getElementById("Player43CurrentWhist").value = Number(document.getElementById("Player43CurrentWhist").value) + Number(document.getElementById("_Player43CurrentWhist").value);
+        document.getElementById("Player1CurrentPool").value = Number(document.getElementById("Player1CurrentPool").value) + Number(document.getElementById("_Player1CurrentPool").value);
+        document.getElementById("Player2CurrentPool").value = Number(document.getElementById("Player2CurrentPool").value) + Number(document.getElementById("_Player2CurrentPool").value);
+        document.getElementById("Player3CurrentPool").value = Number(document.getElementById("Player3CurrentPool").value) + Number(document.getElementById("_Player3CurrentPool").value);
+        document.getElementById("Player4CurrentPool").value = Number(document.getElementById("Player4CurrentPool").value) + Number(document.getElementById("_Player4CurrentPool").value);
+        document.getElementById("Player1CurrentDump").value = Number(document.getElementById("Player1CurrentDump").value) + Number(document.getElementById("_Player1CurrentDump").value);
+        document.getElementById("Player2CurrentDump").value = Number(document.getElementById("Player2CurrentDump").value) + Number(document.getElementById("_Player2CurrentDump").value);
+        document.getElementById("Player3CurrentDump").value = Number(document.getElementById("Player3CurrentDump").value) + Number(document.getElementById("_Player3CurrentDump").value);
+        document.getElementById("Player4CurrentDump").value = Number(document.getElementById("Player4CurrentDump").value) + Number(document.getElementById("_Player4CurrentDump").value);
+    }
+
+    function unhide() {
+        document.getElementById("_Game").hidden = false;
+    }
+</script>

@@ -216,7 +216,7 @@
             source.onmessage = function (event) {
                 document.getElementById('lblMessage').innerHTML = event.data;
                 if (event.data == "Playing") {
-                    location.href='@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")';
+                    setTimeout(() => { location.href = '@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")' }, 2000);
                 }
             };
         }

@@ -690,8 +690,8 @@
 
             source.onmessage = function (event) {
                 document.getElementById('lblMessage').innerHTML = event.data;
-                if (!(event.data == @Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count())) {
-                    location.href='@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")';
+                if (!(document.getElementById('lblMessage').innerHTML == @Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count())) {
+                    setTimeout(() => { location.reload() }, 2000);
                 }
             };
         }
