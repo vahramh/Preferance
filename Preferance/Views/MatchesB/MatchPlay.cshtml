@@ -4,11 +4,15 @@
     ViewData["Title"] = "Match";
 }
 
-<label class="alert-danger">@ViewBag.Message</label><br />
-<label id="lblMessage" ></label><br />
-@if  (@Model.Games[Model.Games.Count - 1].Dealer.Id == ViewBag.Player)
+<label class="alert-danger">@ViewBag.Message</label>
+<br />
+<label id="lblMessage"></label>
+<br />
+<label id="lblMessage2">@Model.Games[Model.Games.Count - 1].Status</label>
+<br />
+@if (@Model.Games[Model.Games.Count - 1].Dealer.Id == ViewBag.Player)
 {
-    <a href ="/../MatchesB/CompleteGame?id=@Model.Id">Confirm all pass</a>
+    <a href="/../MatchesB/CompleteGame?id=@Model.Id">Confirm all pass</a>
 }
 <div>
     <table style="background-color:aquamarine;width:100%;border:thin">
@@ -214,8 +218,8 @@
             };
 
             source.onmessage = function (event) {
-                document.getElementById('lblMessage').innerHTML = event.data;
-                if (event.data == "Playing") {
+                if (!(event.data == document.getElementById('lblMessage2').innerHTML) ||(event.data == "Playing")) {
+                    document.getElementById('lblMessage2').innerHTML = event.data;
                     setTimeout(() => { location.href = '@string.Concat("/../GamesB/Play?id=", Model.Id, "&deal=true")' }, 2000);
                 }
             };

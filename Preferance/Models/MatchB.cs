@@ -49,6 +49,10 @@ namespace Preferance.Models
         public HandB EastWestHandResult { get; set; }
         public int NorthSouthPoints { get; set; } = 0;
         public int EastWestPoints { get; set; } = 0;
+        public int NorthSouthExtras { get; set; } = 0;
+        public int EastWestExtras { get; set; } = 0;
+        public int NorthSouthScore { get; set; } = 0;
+        public int EastWestScore { get; set; } = 0;
         public string MatchBId { get; set; }
     }
 

@@ -1,0 +1,106 @@
+﻿@model Preferance.Models.GameB
+
+@{
+    ViewData["Title"] = "Finalise";
+}
+
+<h1>Finalise</h1>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Finalise">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!--            <input asp-for="Id"/> -->
+            <label hidden>@Model.Id</label>
+            <input hidden asp-for="MatchBId" />
+            <table>
+                <tr>
+                    @if (Model.ActiveTeamNS)
+                    {
+                        <td style="color:red">@Model.North.Name/@Model.South.Name</td>
+                        <td style="color:black">@Model.East.Name/@Model.West.Name</td>
+                    }
+                    else
+                    {
+                        <td style="color:black">@Model.North.Name/@Model.South.Name</td>
+                        <td style="color:red">@Model.East.Name/@Model.West.Name</td>
+                    }
+                </tr>
+                <tr>
+                    <td>Game Value:</td>
+                    <td>
+                        <input id="txtValue" asp-for="Value" class="form-control" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Challenge:</td>
+                    <td>
+                        <input class="form-check-input" asp-for="Challenge" /> @Html.DisplayNameFor(model => model.Challenge)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Contra:</td>
+                    <td>
+                        <input class="form-check-input" asp-for="Contra" /> @Html.DisplayNameFor(model => model.Contra)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Kaput Ordered:</td>
+                    <td>
+                        <input class="form-check-input" asp-for="Kaput" /> @Html.DisplayNameFor(model => model.Kaput)
+                    </td>
+                </tr>
+                <tr>
+                    <td>Outcome:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input asp-for="NorthSouthPoints" class="form-control" />
+                    </td>
+                    <td>
+                        <input asp-for="EastWestPoints" class="form-control" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Extras:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input asp-for="NorthSouthExtras" class="form-control" />
+                    </td>
+                    <td>
+                        <input asp-for="EastWestExtras" class="form-control" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>Score:</td>
+                </tr>
+                <tr>
+                    <td>
+                        <input id="txtNorthSouthScore" asp-for="NorthSouthScore" class="form-control" />
+                    </td>
+                    <td>
+                        <input id="txtEastWestScore" asp-for="EastWestScore" class="form-control" />
+                    </td>
+                </tr>
+            </table>
+            <div class="form-group">
+                <input type="button" value="Save" class="btn btn-primary" onclick="finalise()" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function finalise() {
+        var refer = "/../GamesB/Finalise?";
+        refer = refer + "Id=@Model.Id";
+        refer = refer + "&NorthSouthScore=" + document.getElementById("txtNorthSouthScore").value;
+        refer = refer + "&EastWestScore=" + document.getElementById("txtEastWestScore").value;
+        window.location.href = refer;
+    }
+
+    function calculate() {
+        if ()
+    }
+</script>

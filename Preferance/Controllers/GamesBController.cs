@@ -58,7 +58,7 @@ namespace Preferance.Controllers
                 .Include(o => o.NorthSouthHandResult).ThenInclude(q => q.Cards)
                 .Include(o => o.EastWestHandResult).ThenInclude(q => q.Cards)
                 .ToList()[0];
-            if ((game.Status == "Dealing") || (game.Status == "Bidding"))
+            if ((game.Status == "Dealing") || (game.Status == "Finalising") || (game.Status == "Bidding"))
             {
                 Response.Redirect("/../../MatchesB/Play/" + id);
                 errorView = new ErrorViewModel();
@@ -103,7 +103,10 @@ namespace Preferance.Controllers
 
                 if (game.NorthHand.Cards.Count + game.SouthHand.Cards.Count + game.EastHand.Cards.Count + game.WestHand.Cards.Count == 0)
                 {
-                    Response.Redirect("/../../MatchesB/CompleteGame/" + id);
+                    Response.Redirect("/../../GamesB/FinaliseGame/" + id);
+
+                    //                    Response.Redirect("/../../MatchesB/CompleteGame/" + id);
+
                     errorView = new ErrorViewModel();
                     return View("Error", errorView);
                 }
@@ -349,7 +352,8 @@ namespace Preferance.Controllers
                     _context.SaveChanges();
                     if (game.NorthHand.Cards.Count == 0)
                     {
-                        Response.Redirect("/../../MatchesB/CompleteGame/" + id);
+                        //                        Response.Redirect("/../../MatchesB/CompleteGame/" + id);
+                        Response.Redirect("/../../GamesB/FinaliseGame/" + id);
                         errorView = new ErrorViewModel();
                         return View("Error", errorView);
                     }
@@ -391,6 +395,25 @@ namespace Preferance.Controllers
             ViewBag.Dealer = game.Dealer.Id;
 
             return View("GameProgress", match);
+        }
+
+        public async Task<IActionResult> FinaliseGame(string id)
+        {
+            var match = _context.MatchB.Include(o => o.Games).Include(o => o.North).Include(o => o.South).Include(o => o.East).Include(o => o.West).Include(o => o.LastHand)
+                .ThenInclude(h => h.Cards)
+                .FirstOrDefault(m => m.Id == id);
+
+            GameB game = _context.GameB.Where(m => m.MatchBId == id).OrderByDescending(g => g.Id).Take(1)
+                .Include(o => o.North).Include(o => o.South).Include(o => o.East).Include(o => o.West)
+                .Include(o => o.NorthSouthHandResult).ThenInclude(q => q.Cards)
+                .Include(o => o.EastWestHandResult).ThenInclude(q => q.Cards)
+                .ToList()[0];
+
+            game.Status = "Finalising";
+
+            _context.SaveChanges();
+
+            return View("Finalise", game);
         }
 
         public GameB Collect(GameB game, string move = "")
@@ -472,7 +495,7 @@ namespace Preferance.Controllers
                     game.HandInPlay.Cards.Clear();
                 }
                 if (game.NorthHand.Cards.Count == 0)
-                { game.Status = "Dealing"; }
+                { game.Status = "Finalising"; }
             }
             return game;
         }
@@ -794,6 +817,74 @@ namespace Preferance.Controllers
                     }
                 }
                 return RedirectToAction(nameof(Index));
+            }
+            return View(game);
+        }
+
+        // POST: Games/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+//        [HttpPost]
+//        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Finalise(int Id,int NorthSouthScore, int EastWestScore)
+        {
+            GameB game = _context.GameB.Where(m => m.Id == Id).OrderByDescending(g => g.Id).Take(1)
+                .ToList()[0];
+
+            game.NorthSouthScore = NorthSouthScore;
+            game.EastWestScore = EastWestScore;
+
+                try
+                {
+                    _context.Update(game);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!GameExists(game.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                Response.Redirect("/../../MatchesB/CompleteGame/" + game.MatchBId);
+                errorView = new ErrorViewModel();
+                return View("Error", errorView);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Finalise2(int id, [Bind("Id,ActiveTeamNS,Value,Challenge,Contra,Kaput,NorthSouthPoints,EastWestPoints,NorthSouthExtras,EastWestExtras,NorthSouthScore,EastWestScore,MatchBId")] GameB game)
+        {
+            if (id != game.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(game);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!GameExists(game.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                Response.Redirect("/../../MatchesB/CompleteGame/" + id);
+                errorView = new ErrorViewModel();
+                return View("Error", errorView);
             }
             return View(game);
         }
