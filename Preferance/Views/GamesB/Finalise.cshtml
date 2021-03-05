@@ -13,6 +13,8 @@
             <!--            <input asp-for="Id"/> -->
             <label hidden>@Model.Id</label>
             <input hidden asp-for="MatchBId" />
+            <input id="lblEastWestCardsCount" hidden value="@Model.EastWestHandResult.Cards.Count()"/>
+            <input id="lblNorthSouthCardsCount" hidden value="@Model.NorthSouthHandResult.Cards.Count()"/>
             <table>
                 <tr>
                     @if (Model.ActiveTeamNS)
@@ -29,25 +31,25 @@
                 <tr>
                     <td>Game Value:</td>
                     <td>
-                        <input id="txtValue" asp-for="Value" class="form-control" />
+                        <input id="txtValue" asp-for="Value" class="form-control" onchange="calculate()" />
                     </td>
                 </tr>
                 <tr>
                     <td>Challenge:</td>
                     <td>
-                        <input class="form-check-input" asp-for="Challenge" /> @Html.DisplayNameFor(model => model.Challenge)
+                        <input id="chkChallenge" class="form-check-input" asp-for="Challenge" onchange="calculate()" /> @Html.DisplayNameFor(model => model.Challenge)
                     </td>
                 </tr>
                 <tr>
                     <td>Contra:</td>
                     <td>
-                        <input class="form-check-input" asp-for="Contra" /> @Html.DisplayNameFor(model => model.Contra)
+                        <input id="chkContra" class="form-check-input" asp-for="Contra" onchange="calculate()" /> @Html.DisplayNameFor(model => model.Contra)
                     </td>
                 </tr>
                 <tr>
                     <td>Kaput Ordered:</td>
                     <td>
-                        <input class="form-check-input" asp-for="Kaput" /> @Html.DisplayNameFor(model => model.Kaput)
+                        <input id="chkKaput" class="form-check-input" asp-for="Kaput" onchange="calculate()" /> @Html.DisplayNameFor(model => model.Kaput)
                     </td>
                 </tr>
                 <tr>
@@ -55,10 +57,10 @@
                 </tr>
                 <tr>
                     <td>
-                        <input asp-for="NorthSouthPoints" class="form-control" />
+                        <input id="txtNorthSouthPoints" asp-for="NorthSouthPoints" onchange="calculate()" class="form-control" />
                     </td>
                     <td>
-                        <input asp-for="EastWestPoints" class="form-control" />
+                        <input id="txtEastWestPoints" asp-for="EastWestPoints" onchange="calculate()" class="form-control" />
                     </td>
                 </tr>
                 <tr>
@@ -66,10 +68,10 @@
                 </tr>
                 <tr>
                     <td>
-                        <input asp-for="NorthSouthExtras" class="form-control" />
+                        <input id="txtNorthSouthExtras" asp-for="NorthSouthExtras" onchange="calculate()" class="form-control" />
                     </td>
                     <td>
-                        <input asp-for="EastWestExtras" class="form-control" />
+                        <input id="txtEastWestExtras" asp-for="EastWestExtras" onchange="calculate()" class="form-control" />
                     </td>
                 </tr>
                 <tr>
@@ -97,10 +99,131 @@
         refer = refer + "Id=@Model.Id";
         refer = refer + "&NorthSouthScore=" + document.getElementById("txtNorthSouthScore").value;
         refer = refer + "&EastWestScore=" + document.getElementById("txtEastWestScore").value;
+        refer = refer + "&NorthSouthExtras=" + document.getElementById("txtNorthSouthExtras").value;
+        refer = refer + "&EastWestExtras=" + document.getElementById("txtEastWestExtras").value;
         window.location.href = refer;
     }
 
     function calculate() {
-        if ()
+        var ratioChallenge = 1;
+        if (document.getElementById("chkChallenge").checked) {
+            ratioChallenge = 2;
+        }
+        if (document.getElementById("chkContra").checked) {
+            ratioChallenge = 4;
+        }
+        if ((parseInt(document.getElementById("lblEastWestCardsCount").value) > 0) & (parseInt(document.getElementById("lblNorthSouthCardsCount").value) > 0)) {
+            // None of the teams is Kaput
+            if ("@Model.ActiveTeamNS" == "True") {
+                // NorthSouth is playing
+                if (document.getElementById("chkKaput").checked) {
+                    // Kaput Ordered, hence NorthWest failed
+                    document.getElementById("txtEastWestScore").value = parseInt(document.getElementById("txtValue").value) * ratioChallenge + parseInt(document.getElementById("txtNorthSouthExtras").value) + parseInt(document.getElementById("txtEastWestExtras").value) + 16;
+                    document.getElementById("txtNorthSouthScore").value = 0;
+                }
+                else {
+                    if (10 * parseInt(document.getElementById("txtValue").value) <= parseFloat(document.getElementById("txtNorthSouthPoints").value) + 10 * parseFloat(document.getElementById("txtNorthSouthExtras").value)) {
+                        // Player suceeded
+                        var playerScore = parseFloat(document.getElementById("txtEastWestPoints").value) / 10;
+                        if (playerScore - Math.floor(playerScore) < 0.55) {
+                            playerScore = Math.floor(playerScore);
+                        }
+                        else {
+                            playerScore = Math.floor(playerScore) + 1;
+                        }
+                        if (ratioChallenge == 1) {
+                            document.getElementById("txtEastWestScore").value = playerScore + parseInt(document.getElementById("txtEastWestExtras").value);
+                            document.getElementById("txtNorthSouthScore").value = 16 - parseInt(document.getElementById("txtEastWestScore").value) + parseInt(document.getElementById("txtNorthSouthExtras").value) + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtValue").value);
+                        }
+                        else {
+                            document.getElementById("txtEastWestScore").value = 0;
+                            document.getElementById("txtNorthSouthScore").value = 16 + parseInt(document.getElementById("txtNorthSouthExtras").value) + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtValue").value) * ratioChallenge;
+                        }
+                    }
+                    else {
+                        // Player failed
+                        document.getElementById("txtNorthSouthScore").value = 0;
+                        document.getElementById("txtEastWestScore").value = 16 + parseInt(document.getElementById("txtValue").value) * ratioChallenge + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtNorthSouthExtras").value);
+                    }
+                }
+            }
+            else {
+                // EastWest is playing
+                if (document.getElementById("chkKaput").checked) {
+                    // Kaput Ordered, hence EastWest failed
+                    document.getElementById("txtNorthSouthScore").value = parseInt(document.getElementById("txtValue").value) * ratioChallenge + parseInt(document.getElementById("txtNorthSouthExtras").value) + parseInt(document.getElementById("txtEastWestExtras").value) + 16;
+                    document.getElementById("txtEastWestScore").value = 0;
+                }
+                else {
+                    if (10 * parseInt(document.getElementById("txtValue").value) <= parseFloat(document.getElementById("txtEastWestPoints").value) + 10 * parseFloat(document.getElementById("txtEastWestExtras").value)) {
+                        // Player suceeded
+                        var playerScore = parseFloat(document.getElementById("txtNorthSouthPoints").value) / 10;
+                        if (playerScore - Math.floor(playerScore) < 0.55) {
+                            playerScore = Math.floor(playerScore);
+                        }
+                        else {
+                            playerScore = Math.floor(playerScore) + 1;
+                        }
+                        if (ratioChallenge == 1) {
+                            document.getElementById("txtNorthSouthScore").value = playerScore + parseInt(document.getElementById("txtNorthSouthExtras").value);
+                            document.getElementById("txtEastWestScore").value = 16 - parseInt(document.getElementById("txtNorthSouthScore").value) + parseInt(document.getElementById("txtNorthSouthExtras").value) + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtValue").value);
+                        }
+                        else {
+                            document.getElementById("txtNorthSouthScore").value = 0;
+                            document.getElementById("txtEastWestScore").value = 16 + parseInt(document.getElementById("txtNorthSouthExtras").value) + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtValue").value) * ratioChallenge;
+                        }
+                    }
+                    else {
+                        // Player failed
+                        document.getElementById("txtEastWestScore").value = 0;
+                        document.getElementById("txtNorthSouthScore").value = 16 + parseInt(document.getElementById("txtValue").value) * ratioChallenge + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtNorthSouthExtras").value);
+                    }
+                }
+            }
+        }
+        else {
+            if (parseInt(document.getElementById("lblEastWestCardsCount").value) > 0) {
+            // NorthSouth is Kaput
+                if ("@Model.ActiveTeamNS" == "True") {
+                    // NorthSouth is playing hence failed
+                    document.getElementById("txtNorthSouthScore").value = 0;
+                    document.getElementById("txtEastWestScore").value = 25 + parseInt(document.getElementById("txtValue").value) * ratioChallenge + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtNorthSouthExtras").value);
+                }
+                else {
+                    // EastWest is playing
+                    if (ratioChallenge == 1) {
+                        document.getElementById("txtNorthSouthScore").value = parseInt(document.getElementById("txtNorthSouthExtras").value);
+                        document.getElementById("txtEastWestScore").value = parseInt(document.getElementById("txtValue").value) + parseInt(document.getElementById("txtEastWestExtras").value) + 25;
+                    }
+                    else {
+                        document.getElementById("txtNorthSouthScore").value = 0;
+                        document.getElementById("txtEastWestScore").value = parseInt(document.getElementById("txtValue").value) + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtNorthSouthExtras").value) + 25 * ratioChallenge;
+                    }
+                }
+            }
+            else {
+            // EastWest is Kaput
+                if ("@Model.ActiveTeamNS" == "True") {
+                    // NorthSouth is playing
+                    if (ratioChallenge == 1) {
+                        document.getElementById("txtEastWestScore").value = parseInt(document.getElementById("txtEastWestExtras").value);
+                        document.getElementById("txtNorthSouthScore").value = parseInt(document.getElementById("txtValue").value) + parseInt(document.getElementById("txtNorthSouthExtras").value) + 25;
+                    }
+                    else {
+                        document.getElementById("txtEastWestScore").value = 0;
+                        document.getElementById("txtNorthSouthExtras").value = parseInt(document.getElementById("txtValue").value) + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtNorthSouthExtras").value) + 25 * ratioChallenge;
+                    }
+                }
+                else {
+                    // EastWest is playing hence failed
+                    document.getElementById("txtEastWestScore").value = 0;
+                    document.getElementById("txtNorthSouthScore").value = 25 + parseInt(document.getElementById("txtValue").value) * ratioChallenge + parseInt(document.getElementById("txtEastWestExtras").value) + parseInt(document.getElementById("txtNorthSouthExtras").value);
+                }
+            }
+        }
     }
+
+    window.addEventListener("load", function () {
+        calculate();
+    });
 </script>

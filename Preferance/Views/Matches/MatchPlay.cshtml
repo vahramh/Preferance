@@ -578,10 +578,6 @@
                     <option>8</option>
                     <option>9</option>
                     <option>10</option>
-                    <option>Jack</option>
-                    <option>Queen</option>
-                    <option>King</option>
-                    <option>Ace</option>
                 </select>
             </td>
                 }
@@ -615,6 +611,17 @@
                 }
                 }
         </tr>
+        <tr id="trConfirmOrder" hidden>
+            <td colspan="3">
+                <label style="font-weight:bold;color:red" id="lblConfirmOrder"></label>
+            </td>
+            <td>
+                <button id="btnConfirmOrder" onclick="confirmOrder()" class="btn-block badge-pill badge-info">Confirm</button>
+            </td>
+            <td>
+                <button id="btnCancelOrder" onclick="cancelOrder()" class="btn-block badge-pill badge-info">Cancel</button>
+            </td>
+        </tr>
     </table>
 
 </div>
@@ -636,6 +643,14 @@
     function placeOrder() {
         var selValue = document.getElementById("olValue");
         var selSuit = document.getElementById("olSuit");
+        document.getElementById("lblConfirmOrder").innerHTML = "Ordering " + selValue.options[selValue.selectedIndex].text + " " + selSuit.options[selSuit.selectedIndex].text + ". Are you sure?";
+        document.getElementById("trConfirmOrder").hidden = false;
+        return;
+    }
+
+    function confirmOrder() {
+        var selValue = document.getElementById("olValue");
+        var selSuit = document.getElementById("olSuit");
         if (!("@Model.Games[Model.Games.Count - 1].Type" == "Misere")) {
             if (compareCardNames(selValue.options[selValue.selectedIndex].text + "_" + selSuit.options[selSuit.selectedIndex].text, "@Model.Games[Model.Games.Count - 1].Value" + "_" + "@Model.Games[Model.Games.Count - 1].Type") < 0) {
                 alert("Your order is lower than your bid");
@@ -650,6 +665,11 @@
             refer = refer + "&type=" + selSuit.options[selSuit.selectedIndex].text + "&value=" + selValue.options[selValue.selectedIndex].text + "&discard1value=" + document.getElementById("discarded1").value.substring(3, document.getElementById("discarded1").value.indexOf("_")) + "&discard1suit=" + document.getElementById("discarded1").value.substring(document.getElementById("discarded1").value.indexOf("_") + 1, 100) + "&discard2value=" + document.getElementById("discarded2").value.substring(3, document.getElementById("discarded2").value.indexOf("_")) + "&discard2suit=" + document.getElementById("discarded2").value.substring(document.getElementById("discarded2").value.indexOf("_") + 1, 100);
         }
         window.location.href = refer;
+        return;
+    }
+
+    function cancelOrder() {
+        document.getElementById("trConfirmOrder").hidden = true;
         return;
     }
 

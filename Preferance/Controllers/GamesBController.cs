@@ -826,15 +826,17 @@ namespace Preferance.Controllers
         // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
 //        [HttpPost]
 //        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Finalise(int Id,int NorthSouthScore, int EastWestScore)
+        public async Task<IActionResult> Finalise(int Id,int NorthSouthScore, int EastWestScore, int NorthSouthExtras, int EastWestExtras)
         {
             GameB game = _context.GameB.Where(m => m.Id == Id).OrderByDescending(g => g.Id).Take(1)
                 .ToList()[0];
 
             game.NorthSouthScore = NorthSouthScore;
             game.EastWestScore = EastWestScore;
+            game.NorthSouthExtras = NorthSouthExtras;
+            game.EastWestExtras = EastWestExtras;
 
-                try
+            try
                 {
                     _context.Update(game);
                     _context.SaveChanges();
@@ -850,7 +852,24 @@ namespace Preferance.Controllers
                         throw;
                     }
                 }
-                Response.Redirect("/../../MatchesB/CompleteGame/" + game.MatchBId);
+
+            MatchB match = _context.MatchB.Where(m => m.Id == game.MatchBId).Take(1)
+                .ToList()[0];
+
+            match.NorthSouthScore = match.NorthSouthScore + NorthSouthScore;
+            match.EastWestScore = match.EastWestScore + EastWestScore;
+
+            try
+            {
+                _context.Update(match);
+                _context.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+
+            Response.Redirect("/../../MatchesB/CompleteGame/" + game.MatchBId);
                 errorView = new ErrorViewModel();
                 return View("Error", errorView);
         }

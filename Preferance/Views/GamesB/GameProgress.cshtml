@@ -4,11 +4,9 @@
     ViewData["Title"] = "Match";
 }
 
-<label id="lblMessage">N</label>
-<br />
-<label id="lblModel">@Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count()</label>
-<br />
-<label id="lblModel2"></label>
+<label id="lblMessage" hidden hidden>N</label>
+<label id="lblModel" hidden>@Model.Games[Model.Games.Count - 1].HandInPlay.Cards.Count()</label>
+<label id="lblModel2" hidden></label>
 <div>
     <table style="background-color:aquamarine;width:100%;border:thin">
         <tr style="width:100%;text-align:center;font-weight:400">

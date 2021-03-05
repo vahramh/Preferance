@@ -48,8 +48,22 @@
     </table>
     <table style="border:double;background-color:beige;width:100%">
         <tr>
-            <td colspan="2">@Model.North.Name / @Model.South.Name</td>
-            <td colspan="2">@Model.East.Name / @Model.West.Name</td>
+            <td colspan="4" style="justify-content:center">@Model.North.Name / @Model.South.Name</td>
+            <td colspan="4" style="justify-content:center">@Model.East.Name / @Model.West.Name</td>
+        </tr>
+        <tr>
+            <td colspan="4" style="justify-content:center">@Model.NorthSouthScore</td>
+            <td colspan="4" style="justify-content:center">@Model.EastWestScore</td>
+        </tr>
+        <tr>
+            <td>Order</td>
+            <td>Points</td>
+            <td>Extras</td>
+            <td>Score</td>
+            <td>Order</td>
+            <td>Points</td>
+            <td>Extras</td>
+            <td>Score</td>
         </tr>
         @for (var i = 0; i < Model.Games.Count; i++)
         {
@@ -63,6 +77,8 @@
                     {<label>-</label>}
                 </td>
                 <td>@Model.Games[i].NorthSouthPoints</td>
+                <td>@Model.Games[i].NorthSouthExtras</td>
+                <td>@Model.Games[i].NorthSouthScore</td>
                 <td>
                     @if (!(@Model.Games[i].ActiveTeamNS))
                     {
@@ -72,6 +88,8 @@
                     {<label>-</label>}
                 </td>
                 <td>@Model.Games[i].EastWestPoints</td>
+                <td>@Model.Games[i].EastWestExtras</td>
+                <td>@Model.Games[i].EastWestScore</td>
             </tr>
         }
     </table>

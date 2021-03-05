@@ -6,9 +6,9 @@
 
 <label class="alert-danger">@ViewBag.Message</label>
 <br />
-<label id="lblMessage"></label>
+<label id="lblMessage" hidden></label>
 <br />
-<label id="lblMessage2">@Model.Games[Model.Games.Count - 1].Status</label>
+<label id="lblMessage2" hidden>@Model.Games[Model.Games.Count - 1].Status</label>
 <br />
 @if (@Model.Games[Model.Games.Count - 1].Dealer.Id == ViewBag.Player)
 {
